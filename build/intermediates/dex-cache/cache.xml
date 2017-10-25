@@ -3,12 +3,30 @@
 
     <item
         is-multidex="true"
+        jar="/Users/Juhana/Documents/AndroidStudioProjects/mobiiliprojekti/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.2"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/Users/Juhana/Documents/AndroidStudioProjects/mobiiliprojekti/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_684847053f75c5a61bb7ec27fbcef32f1a87c542/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/Juhana/Documents/AndroidStudioProjects/NeverForget/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         optimize="true"
         revision="26.0.2"
         sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
         <dex dex="/Users/Juhana/Documents/AndroidStudioProjects/NeverForget/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_9af17c463e3a4e2d93d341b561259f915bec66a8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Juhana/Documents/AndroidStudioProjects/mobiiliprojekti/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d05572d50fd6beea6558d4fa9e0f6e267f98750f">
+        <dex dex="/Users/Juhana/Documents/AndroidStudioProjects/mobiiliprojekti/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_fff42ec9ffe37ba87cfdde2092596a28b1739cc2/classes.dex" />
     </item>
     <item
         is-multidex="true"

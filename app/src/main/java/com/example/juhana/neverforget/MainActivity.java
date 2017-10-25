@@ -2,6 +2,7 @@ package com.example.juhana.neverforget;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -97,6 +98,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 tv1.setText(edt.getText().toString());
+                String message = edt.getText().toString();
+                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+                intent.putExtra("EXTRA_MESSAGE", message);
+                startActivity(intent);
                 //do something with edt.getText().toString();
             }
         });
