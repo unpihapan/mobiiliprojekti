@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final EditText edt = (EditText) dialogView.findViewById(R.id.edit1);
 
         dialogBuilder.setTitle("Enter name");
-        dialogBuilder.setMessage("Enter text below");
+        dialogBuilder.setMessage("Enter text above");
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
