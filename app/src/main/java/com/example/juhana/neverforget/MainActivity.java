@@ -12,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fab,fab1,fab2;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private TextView tv1;
-    public ArrayList<HashMap<String, HashMap<String, String>>> cardList = new ArrayList<>();
+    //public ArrayList<HashMap<String, HashMap<String, String>>> cardList = new ArrayList<>();
+    public ArrayList<String> cardListArray = new ArrayList<String>();
 
 
     @Override
@@ -35,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab1 = (FloatingActionButton)findViewById(R.id.fab1);
         fab2 = (FloatingActionButton)findViewById(R.id.fab2);
-        tv1 = (TextView)findViewById(R.id.tv1);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
@@ -43,6 +45,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab.setOnClickListener(this);
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
+
+
+        // ListView -- Laita if sisään
+        ListView cardListView;
+        cardListView = (ListView)findViewById(R.id.lvMain);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                cardListArray );
+
+        cardListView.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -102,13 +116,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-
-                tv1.setText(edt.getText().toString());
                 String message = edt.getText().toString();
+
+                // Luodaan cardList olio
+                CardList cardList = new CardList();
+                cardList.setName(message);
+
+                cardListArray.add(cardList.getName());
+
+
+                // Avataan AddActivity
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                 intent.putExtra("EXTRA_MESSAGE", message);
                 startActivity(intent);
                 //do something with edt.getText().toString();
+
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
