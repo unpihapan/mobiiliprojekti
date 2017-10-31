@@ -20,7 +20,8 @@ import java.util.HashMap;
 public class AddActivity extends AppCompatActivity {
 
     ListView CardListView;
-    ArrayList<HashMap<String, String>> cardList = new ArrayList<>();
+    ArrayList<HashMap<String, String>> card = new ArrayList<>();
+   // ArrayList<HashMap<String, HashMap<String, String>>> cardList = new ArrayList<>();
     SimpleAdapter simpleAdapter;
     Button button;
     EditText edit1;
@@ -38,27 +39,10 @@ public class AddActivity extends AppCompatActivity {
         edit2 = (EditText)findViewById(R.id.et_sideb);
         button = (Button)findViewById(R.id.btn_add);
 
-
-        HashMap<String, String> testidata = new HashMap<>();
-        testidata.put("Diana", "3214 Broadway Avenue");
-        testidata.put("Tyga", "343 Rack City Drive");
-        testidata.put("Rich Homie Quan", "111 Everything Gold Way");
-        testidata.put("Donna", "789 Escort St");
-        testidata.put("Bartholomew", "332 Dunkin St");
-        testidata.put("Eden", "421 Angelic Blvd");
-
-        HashMap<String, String> testidata2 = new HashMap<>();
-        testidata2.put("Diana", "3214 Broadway Avenue");
-        testidata2.put("Tyga", "343 Rack City Drive");
-
-       // cardList.add(testidata);
-       // cardList.add(testidata2);
-
-        simpleAdapter = new SimpleAdapter(this, cardList, R.layout.list_card_item,
+        simpleAdapter = new SimpleAdapter(this, card, R.layout.list_card_item,
                 new String[] {"Question", "Answer"},
                 new int[]{R.id.tvquestion, R.id.tvanswer});
         CardListView.setAdapter(simpleAdapter);
-
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +53,8 @@ public class AddActivity extends AppCompatActivity {
                     HashMap<String, String> carddata = new HashMap<>();
                     carddata.put("Question", edit1.getText().toString());
                     carddata.put("Answer", edit2.getText().toString());
-                    cardList.add(carddata);
+
+                    card.add(carddata);
                     simpleAdapter.notifyDataSetChanged();
                     edit1.setText("");
                     edit2.setText("");
@@ -84,7 +69,7 @@ public class AddActivity extends AppCompatActivity {
         CardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                HashMap selectedItem = cardList.get(pos);
+                HashMap selectedItem = card.get(pos);
                 showEditCardDialog(selectedItem);
             }
 
@@ -120,4 +105,6 @@ public class AddActivity extends AppCompatActivity {
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
+
+
 }
