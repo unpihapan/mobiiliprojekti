@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">NeverForget</string>
     <string name="action_settings">Settings</string>
+
+    <string name="dialog_edit_card_body">Do you want to edit question and answer?</string>
+    <string name="dialog_edit_positive_button">AGREE</string>
+    <string name="dialog_edit_negative_button">DISAGREE</string>
+
+
 </resources>
