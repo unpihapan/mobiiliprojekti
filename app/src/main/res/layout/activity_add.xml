@@ -56,6 +56,13 @@
             android:visibility="visible"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvCardsInList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cards in List: 0"
+        android:textSize="30sp"
+        android:background="@drawable/border_bottom"/>
 
     <ListView
         android:id="@+id/lv1"

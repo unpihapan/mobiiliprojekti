@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ public class AddActivity extends AppCompatActivity {
     Button button_save;
     EditText edit1;
     EditText edit2;
+    TextView cardCount;
     public int currentPos;
 
     @Override
@@ -44,7 +45,8 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         Intent intent = getIntent();
-        setTitle(intent.getStringExtra("EXTRA_MESSAGE"));
+        String title = intent.getStringExtra("EXTRA_MESSAGE") + ": Add Cards";
+        setTitle(title);
 
         CardListView = (ListView)findViewById(R.id.lv1);
         edit1 = (EditText)findViewById(R.id.et_sidea);
@@ -53,7 +55,9 @@ public class AddActivity extends AppCompatActivity {
         button_cancel = (Button)findViewById(R.id.btn_cancel);
         button_delete = (Button)findViewById(R.id.btn_delete);
         button_save = (Button)findViewById(R.id.btn_save);
+        cardCount = (TextView)findViewById(R.id.tvCardsInList);
 
+        cardCount.setText("Cards in List: " + card.size());
 
         simpleAdapter = new SimpleAdapter(this, card, R.layout.list_card_item,
                 new String[] {"Question", "Answer"},
@@ -75,6 +79,7 @@ public class AddActivity extends AppCompatActivity {
                     simpleAdapter.notifyDataSetChanged();
                     edit1.setText("");
                     edit2.setText("");
+                    cardCount.setText("Cards in List: " + card.size());
                     hideKeyboard(AddActivity.this, findViewById(R.id.addActivity));
                     edit1.clearFocus();
                     edit2.clearFocus();
