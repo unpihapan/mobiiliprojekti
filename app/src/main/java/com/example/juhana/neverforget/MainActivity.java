@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 animateFAB();
                 break;
             case R.id.fab1:
-
+                Intent intent = new Intent(this, GameActivity.class);
+                startActivity(intent);
                 Log.d("Raj", "Fab 1");
                 break;
             case R.id.fab2:
