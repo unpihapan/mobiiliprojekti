@@ -15,10 +15,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private Boolean isFabOpen = false;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tv1;
     //public ArrayList<HashMap<String, HashMap<String, String>>> cardList = new ArrayList<>();
     public ArrayList<String> cardListArray = new ArrayList<String>();
+    private SimpleAdapter simpleAdapter;
 
 
     @Override
@@ -46,17 +49,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
 
+        // dummy data for main activity list view test
+        ArrayList<HashMap<String, String>> dummyData = new ArrayList<>();
+        for (int i = 0; i < 12; i++){
+            Random rand = new Random();
+            HashMap<String, String> tempHashMap = new HashMap<>();
+            tempHashMap.put("CardListName", "List Number" + (i+1));
+            tempHashMap.put("CardCount", "Cards in List: " + rand.nextInt((26 - 2) + 1) + 2);
+            dummyData.add(tempHashMap);
+        }
 
         // ListView -- Laita if sisään
         ListView cardListView;
         cardListView = (ListView)findViewById(R.id.lvMain);
 
+        simpleAdapter = new SimpleAdapter(this, dummyData, R.layout.main_activity_list_item,
+                new String[] {"CardListName", "CardCount"},
+                new int[]{R.id.tvCardListName, R.id.tvCardCount});
+        cardListView.setAdapter(simpleAdapter);
+        /*
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
                 cardListArray );
 
-        cardListView.setAdapter(arrayAdapter);
+        cardListView.setAdapter(arrayAdapter);*/
     }
 
     @Override
