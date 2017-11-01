@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -57,11 +58,11 @@ public class AddActivity extends AppCompatActivity {
         button_save = (Button)findViewById(R.id.btn_save);
         cardCount = (TextView)findViewById(R.id.tvCardsInList);
 
-        cardCount.setText("Cards in List: " + card.size());
+        cardCount.setText(getString(R.string.add_activity_cards_in_list, card.size()));
 
         simpleAdapter = new SimpleAdapter(this, card, R.layout.list_card_item,
-                new String[] {"Question", "Answer"},
-                new int[]{R.id.tvquestion, R.id.tvanswer});
+                new String[] {"Question", "Answer", "Index"},
+                new int[]{R.id.tvquestion, R.id.tvanswer, R.id.tvIndex});
         CardListView.setAdapter(simpleAdapter);
 
         /*
@@ -74,12 +75,13 @@ public class AddActivity extends AppCompatActivity {
                     HashMap<String, String> carddata = new HashMap<>();
                     carddata.put("Question", edit1.getText().toString());
                     carddata.put("Answer", edit2.getText().toString());
-
+                    carddata.put("Index", String.valueOf(card.size() + 1));
                     card.add(carddata);
                     simpleAdapter.notifyDataSetChanged();
+
                     edit1.setText("");
                     edit2.setText("");
-                    cardCount.setText("Cards in List: " + card.size());
+                    cardCount.setText(getString(R.string.add_activity_cards_in_list, card.size()));
                     hideKeyboard(AddActivity.this, findViewById(R.id.addActivity));
                     edit1.clearFocus();
                     edit2.clearFocus();
@@ -150,7 +152,7 @@ public class AddActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 currentPos = pos;
-                HashMap selectedItem = card.get(pos);
+                HashMap<String, String> selectedItem = card.get(pos);
                 showEditCardDialog(selectedItem);
             }
 
