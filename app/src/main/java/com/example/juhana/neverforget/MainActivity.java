@@ -50,31 +50,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
 
-        // dummy data for main activity list view test
-        ArrayList<HashMap<String, String>> dummyData = new ArrayList<>();
-        for (int i = 0; i < 12; i++){
-            Random rand = new Random();
-            HashMap<String, String> tempHashMap = new HashMap<>();
-            tempHashMap.put("CardListName", "List Number" + (i+1));
-            tempHashMap.put("CardCount", "Cards in List: " + rand.nextInt((26 - 2) + 1) + 2);
-            dummyData.add(tempHashMap);
-        }
 
-        // ListView -- Laita if sisään
         ListView cardListView;
         cardListView = (ListView)findViewById(R.id.lvMain);
 
-        simpleAdapter = new SimpleAdapter(this, dummyData, R.layout.main_activity_list_item,
+        simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
                 new String[] {"CardListName", "CardCount"},
                 new int[]{R.id.tvCardListName, R.id.tvCardCount});
         cardListView.setAdapter(simpleAdapter);
-        /*
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                cardListArray );
-
-        cardListView.setAdapter(arrayAdapter);*/
     }
 
     @Override
@@ -138,9 +121,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 // Luodaan cardList olio
                 CardList cardList = new CardList();
+                counter++;
                 cardList.setName(message);
 
-                cardListArray.add(cardList.getName());
+                HashMap<String, String> tempHashMap = new HashMap<>();
+                tempHashMap.put("CardListName", counter + ". " + cardList.getName());
+                tempHashMap.put("CardCount", "Cards in List: " + cardList.getCardCount());
+                cardListArray.add(tempHashMap);
+
 
 
                 // Avataan AddActivity

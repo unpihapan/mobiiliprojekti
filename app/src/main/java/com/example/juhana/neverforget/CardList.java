@@ -8,6 +8,7 @@ public class CardList {
 
     private int id;
     private String name;
+    private int cardCount = 0;
 
     CardList() { }
 
@@ -20,4 +21,14 @@ public class CardList {
 
     public String getName() { return name;}
     public void setName(String name) {this.name = name;}
+
+    public int getCardCount(){return cardCount;}
+
+    public void newCard(String question, String ansver){
+        Card card = new Card();
+        card.setId(cardCount);
+        card.setQuestion(question);
+        card.setAnswer(ansver);
+        cardCount++;
+    }
 }
