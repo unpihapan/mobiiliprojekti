@@ -27,9 +27,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fab,fab1,fab2;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private TextView tv1;
-    //public ArrayList<HashMap<String, HashMap<String, String>>> cardList = new ArrayList<>();
-    public ArrayList<String> cardListArray = new ArrayList<String>();
+    //cardListArray
+    public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
     private SimpleAdapter simpleAdapter;
+    public int counter = 0; // Laskee listojen määrän
 
 
     @Override
