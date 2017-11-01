@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fab,fab1,fab2;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private TextView tv1;
+    private ImageView arrow;
     //cardListArray
     public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
     private SimpleAdapter simpleAdapter;
@@ -49,6 +51,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab.setOnClickListener(this);
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
+
+        // Jos ViewListissä on jotain, ei "apu nuolta" tarvita
+        tv1 = (TextView)findViewById(R.id.tv1);
+        arrow = (ImageView)findViewById(R.id.arrow);
+        if (cardListArray.isEmpty() == false){
+            tv1.setVisibility(View.GONE);
+            arrow.setVisibility(View.GONE);
+        }
 
 
         ListView cardListView;
@@ -129,7 +139,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tempHashMap.put("CardCount", "Cards in List: " + cardList.getCardCount());
                 cardListArray.add(tempHashMap);
 
-
+                if (cardListArray.isEmpty() == false){
+                    tv1.setVisibility(View.GONE);
+                    arrow.setVisibility(View.GONE);
+                }
 
                 // Avataan AddActivity
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
