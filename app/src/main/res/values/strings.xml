@@ -8,5 +8,8 @@
     <string name="dialog_edit_positive_button">AGREE</string>
     <string name="dialog_edit_negative_button">DISAGREE</string>
 
+    <string name="add_activity_edit_text_validation">Please fill both fields.</string>
+    <string name="add_activity_card_add_success">Card added to list</string>
+
 
 </resources>
