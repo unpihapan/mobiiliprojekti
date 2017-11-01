@@ -1,5 +1,9 @@
 package com.example.juhana.neverforget;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
+
 /**
  * Created by Juhana on 31.10.2017.
  */
@@ -8,7 +12,8 @@ public class CardList {
 
     private int id;
     private String name;
-    private int cardCount = 0;
+    private ArrayList<Object> cards = new ArrayList<Object>();
+    private int cardCount = cards.size();
 
     CardList() { }
 
@@ -22,13 +27,14 @@ public class CardList {
     public String getName() { return name;}
     public void setName(String name) {this.name = name;}
 
-    public int getCardCount(){return cardCount;}
+    int getCardCount(){return cardCount;}
 
-    public void newCard(String question, String ansver){
+    public void newCard(String question, String ansver) {
         Card card = new Card();
-        card.setId(cardCount);
+        card.setId(cards.size());
         card.setQuestion(question);
         card.setAnswer(ansver);
-        cardCount++;
+        cards.add(card);
+        cardCount = cards.size();
     }
 }

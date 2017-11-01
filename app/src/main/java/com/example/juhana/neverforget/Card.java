@@ -7,7 +7,7 @@ package com.example.juhana.neverforget;
 public class Card {
 
     private int id;
-    // private CardList cardList;           ??
+    // private CardList cardList;
     private int list_id;
     private String question;
     private String answer;
@@ -29,7 +29,7 @@ public class Card {
     public void setAnswer(String answer) {this.answer = answer;}
 
 
-    /*      ??
+    /*
     public CardList getCardlist() {
         return cardList;
     }
