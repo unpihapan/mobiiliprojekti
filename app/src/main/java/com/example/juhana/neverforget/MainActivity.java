@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Jos ViewListissä on jotain, ei "apu nuolta" tarvita
         tv1 = (TextView)findViewById(R.id.tv1);
         arrow = (ImageView)findViewById(R.id.arrow);
-        if (cardListArray.isEmpty() == false){
+        if (!cardListArray.isEmpty()){
             tv1.setVisibility(View.GONE);
             arrow.setVisibility(View.GONE);
         }
@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
+                animateFAB();
+
                 String message = edt.getText().toString();
 
                 // Luodaan cardList olio
@@ -139,7 +141,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tempHashMap.put("CardCount", "Cards in List: " + cardList.getCardCount());
                 cardListArray.add(tempHashMap);
 
-                if (cardListArray.isEmpty() == false){
+
+                // Piilotetaan "apunuoli"
+                if (!cardListArray.isEmpty()){
                     tv1.setVisibility(View.GONE);
                     arrow.setVisibility(View.GONE);
                 }
