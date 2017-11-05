@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -123,14 +124,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.edit1);
 
-        dialogBuilder.setTitle("Enter name");
-        dialogBuilder.setMessage("Enter text above");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        dialogBuilder.setTitle(R.string.dialog_create_list_title);
+        dialogBuilder.setMessage(R.string.dialog_create_list_message);
+        dialogBuilder.setPositiveButton(R.string.action_done, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                animateFAB();
-
                 String message = edt.getText().toString();
+
+                animateFAB();
 
                 // Luodaan cardList olio
                 CardList cardList = new CardList();
@@ -142,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tempHashMap.put("CardCount", "Cards in List: " + cardList.getCardCount());
                 cardListArray.add(tempHashMap);
 
-
                 // Piilotetaan "apunuoli"
                 if (!cardListArray.isEmpty()){
                     tv1.setVisibility(View.GONE);
@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                 intent.putExtra("EXTRA_MESSAGE", message);
                 startActivity(intent);
-                //do something with edt.getText().toString();
 
             }
         });
