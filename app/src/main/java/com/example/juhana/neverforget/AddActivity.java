@@ -119,6 +119,7 @@ public class AddActivity extends AppCompatActivity {
                 simpleAdapter.notifyDataSetChanged();
                 edit1.setText("");
                 edit2.setText("");
+                cardCount.setText(getString(R.string.add_activity_cards_in_list, card.size()));
                 button_add.setVisibility(View.VISIBLE);
                 button_cancel.setVisibility(View.INVISIBLE);
                 button_delete.setVisibility(View.INVISIBLE);
@@ -134,6 +135,7 @@ public class AddActivity extends AppCompatActivity {
                 HashMap<String, String> carddata = new HashMap<>();
                 carddata.put("Question", edit1.getText().toString());
                 carddata.put("Answer", edit2.getText().toString());
+                carddata.put("Index", String.valueOf(currentPos + 1));
 
                 card.set(currentPos, carddata);
                 simpleAdapter.notifyDataSetChanged();
