@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,7 +20,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private Boolean isFabOpen = false;
@@ -32,9 +30,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView arrow;
     //cardListArray
     public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
-    private SimpleAdapter simpleAdapter;
     public int counter = 0; // Laskee listojen määrän
 
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +51,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
 
+        // db
+        db = AppDatabase.getDatabase(getApplicationContext());
+        List<Card> cards = db.cardDao().getCards();
+        Log.d("test", String.valueOf(cards.size()));
+
+
         // Jos ViewListissä on jotain, ei "apu nuolta" tarvita
         tv1 = (TextView)findViewById(R.id.tv1);
         arrow = (ImageView)findViewById(R.id.arrow);
@@ -61,12 +65,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             arrow.setVisibility(View.GONE);
         }
 
-
         ListView cardListView;
         cardListView = (ListView)findViewById(R.id.lvMain);
 
-        simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
-                new String[] {"CardListName", "CardCount"},
+        // populate listView
+        HashMap<String, String> tempHashMap = new HashMap<>();
+        List<CardList> cardLists = db.cardListDao().getCardLists();
+        for (int i = 0; i < cardLists.size(); i++){
+            tempHashMap.put("CardListName", counter + ". " + cardLists.get(i).getName());
+            tempHashMap.put("CardCount", "Cards in List: 0");
+        }
+        cardListArray.add(tempHashMap);
+
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
+                new String[]{"CardListName", "CardCount"},
                 new int[]{R.id.tvCardListName, R.id.tvCardCount});
         cardListView.setAdapter(simpleAdapter);
     }
@@ -85,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("Raj", "Fab 1");
                 break;
             case R.id.fab2:
-                showChangeLangDialog();
+                showCreateListDialog();
                 Log.d("Raj", "Fab 2");
                 break;
         }
@@ -116,31 +128,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void showChangeLangDialog() {
+    // Create list dialog
+    public void showCreateListDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
         dialogBuilder.setView(dialogView);
 
-        final EditText edt = (EditText) dialogView.findViewById(R.id.edit1);
+        final EditText listNameEditText = (EditText) dialogView.findViewById(R.id.edit1);
 
         dialogBuilder.setTitle(R.string.dialog_create_list_title);
         dialogBuilder.setMessage(R.string.dialog_create_list_message);
+
+        // done button
         dialogBuilder.setPositiveButton(R.string.action_done, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                String listName = listNameEditText.getText().toString();
 
-                String message = edt.getText().toString();
-
+                // close floating action buttons
                 animateFAB();
 
                 // Luodaan cardList olio
-                CardList cardList = new CardList();
+                CardList cardList = new CardList(listName);
                 counter++;
-                cardList.setName(message);
 
+                // save cardList
+                db.cardListDao().InsertCardLists(cardList);
+
+                // populate listView
                 HashMap<String, String> tempHashMap = new HashMap<>();
-                tempHashMap.put("CardListName", counter + ". " + cardList.getName());
-                tempHashMap.put("CardCount", "Cards in List: " + cardList.getCardCount());
+                List<CardList> cardLists = db.cardListDao().getCardLists();
+                for (int i = 0; i < cardLists.size(); i++){
+                    tempHashMap.put("CardListName", counter + ". " + cardLists.get(i).getName());
+                    tempHashMap.put("CardCount", "Cards in List: 0");
+                }
                 cardListArray.add(tempHashMap);
 
                 // Piilotetaan "apunuoli"
@@ -151,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 // Avataan AddActivity
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("EXTRA_MESSAGE", message);
+                intent.putExtra("EXTRA_MESSAGE", listName);
                 startActivity(intent);
 
             }
@@ -164,4 +185,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
+
 }
