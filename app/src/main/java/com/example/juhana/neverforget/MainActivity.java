@@ -12,11 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +65,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new int[]{R.id.tvCardListName, R.id.tvCardCount});
         cardListView.setAdapter(simpleAdapter);
 
+        // list item click -> edit card
+        cardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                String name = cardListArray.get(pos).get("CardListName");
+                Toast.makeText(MainActivity.this, name, Toast.LENGTH_LONG).show();
+            }
 
+
+        });
     }
     @Override
     public void onResume(){
@@ -175,5 +186,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             cardListArray.add(tempHashMap);
         }
     }
+
 
 }
