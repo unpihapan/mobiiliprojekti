@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView arrow;
     ListView cardListView;
     public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
-    public int counter = 1; // Laskee listojen määrän
 
     private AppDatabase db;
 
@@ -62,9 +61,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<CardList> cardLists = db.cardListDao().getCardLists();
         for (int i = 0; i < cardLists.size(); i++){
             HashMap<String, String> tempHashMap = new HashMap<>();
-            tempHashMap.put("CardListName", counter++ + ". " + cardLists.get(i).getName());
-            tempHashMap.put("CardCount", "Cards in List: 0");
+            tempHashMap.put("CardListName", (i + 1) + ". " + cardLists.get(i).getName());
+            tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
             cardListArray.add(tempHashMap);
+            Log.d("qwerty", String.valueOf(cardLists.get(i).getId()));
         }
 
         // populate listView
@@ -146,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 // Luodaan cardList olio
                 CardList cardList = new CardList(listName);
-                counter++;
 
                 // save cardList
                 db.cardListDao().InsertCardLists(cardList);
@@ -155,8 +154,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 HashMap<String, String> tempHashMap = new HashMap<>();
                 List<CardList> cardLists = db.cardListDao().getCardLists();
                 for (int i = 0; i < cardLists.size(); i++){
-                    tempHashMap.put("CardListName", counter + ". " + cardLists.get(i).getName());
-                    tempHashMap.put("CardCount", "Cards in List: 0");
+                    tempHashMap.put("CardListName", (i + 1) + ". " + cardLists.get(i).getName());
+                    tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
                 }
                 cardListArray.add(tempHashMap);
 
@@ -169,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Avataan AddActivity
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                 intent.putExtra("EXTRA_MESSAGE", listName);
+                intent.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(listName));
                 startActivity(intent);
 
             }

@@ -26,12 +26,4 @@ public class CardList {
     public int getId() { return id;}
     public String getName() { return name;}
 
-    /*
-    public void newCard(String question, String ansver) {
-        Card card = new Card();
-        card.setId(cards.size());
-        card.setQuestion(question);
-        card.setAnswer(ansver);
-        cards.add(card);
-    }*/
 }

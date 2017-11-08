@@ -17,6 +17,9 @@ public interface CardListDao {
     @Query("Select * FROM CardList WHERE id = :id")
     CardList getCardListById(int id);
 
+    @Query("Select id FROM CardList WHERE name = :name")
+    int getIdByCardListName(String name);
+
     @Insert
     void InsertCardLists(CardList... cardlists);
 
