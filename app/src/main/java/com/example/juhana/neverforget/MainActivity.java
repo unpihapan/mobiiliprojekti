@@ -23,14 +23,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private TextView tv1;
     private ImageView arrow;
-    //cardListArray
+    ListView cardListView;
     public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
-    public int counter = 0; // Laskee listojen määrän
+    public int counter = 1; // Laskee listojen määrän
 
     private AppDatabase db;
 
@@ -40,9 +41,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // component init
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab1 = (FloatingActionButton)findViewById(R.id.fab1);
         fab2 = (FloatingActionButton)findViewById(R.id.fab2);
+        cardListView = (ListView)findViewById(R.id.lvMain);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
@@ -53,9 +57,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
-        List<Card> cards = db.cardDao().getCards();
-        Log.d("test", String.valueOf(cards.size()));
 
+        // fetch data
+        List<CardList> cardLists = db.cardListDao().getCardLists();
+        for (int i = 0; i < cardLists.size(); i++){
+            HashMap<String, String> tempHashMap = new HashMap<>();
+            tempHashMap.put("CardListName", counter++ + ". " + cardLists.get(i).getName());
+            tempHashMap.put("CardCount", "Cards in List: 0");
+            cardListArray.add(tempHashMap);
+        }
+
+        // populate listView
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
+                new String[]{"CardListName", "CardCount"},
+                new int[]{R.id.tvCardListName, R.id.tvCardCount});
+        cardListView.setAdapter(simpleAdapter);
 
         // Jos ViewListissä on jotain, ei "apu nuolta" tarvita
         tv1 = (TextView)findViewById(R.id.tv1);
@@ -64,67 +80,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tv1.setVisibility(View.GONE);
             arrow.setVisibility(View.GONE);
         }
-
-        ListView cardListView;
-        cardListView = (ListView)findViewById(R.id.lvMain);
-
-        // populate listView
-        HashMap<String, String> tempHashMap = new HashMap<>();
-        List<CardList> cardLists = db.cardListDao().getCardLists();
-        for (int i = 0; i < cardLists.size(); i++){
-            tempHashMap.put("CardListName", counter + ". " + cardLists.get(i).getName());
-            tempHashMap.put("CardCount", "Cards in List: 0");
-        }
-        cardListArray.add(tempHashMap);
-
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
-                new String[]{"CardListName", "CardCount"},
-                new int[]{R.id.tvCardListName, R.id.tvCardCount});
-        cardListView.setAdapter(simpleAdapter);
     }
 
+    // floating action button click listeners
     @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id){
             case R.id.fab:
-
+                // show inner fabs
                 animateFAB();
                 break;
             case R.id.fab1:
+                // start gameactivity
                 Intent intent = new Intent(this, GameActivity.class);
                 startActivity(intent);
-                Log.d("Raj", "Fab 1");
                 break;
             case R.id.fab2:
+                // show create list dialog
                 showCreateListDialog();
-                Log.d("Raj", "Fab 2");
                 break;
         }
     }
 
+    // animation for floating action buttons
     public void animateFAB(){
 
         if(isFabOpen){
-
             fab.startAnimation(rotate_backward);
             fab1.startAnimation(fab_close);
             fab2.startAnimation(fab_close);
             fab1.setClickable(false);
             fab2.setClickable(false);
             isFabOpen = false;
-            Log.d("Raj", "close");
 
         } else {
-
             fab.startAnimation(rotate_forward);
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
             fab1.setClickable(true);
             fab2.setClickable(true);
             isFabOpen = true;
-            Log.d("Raj","open");
-
         }
     }
 
