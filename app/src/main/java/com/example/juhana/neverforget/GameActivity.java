@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.Menu;
@@ -107,6 +108,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 return true;
             case R.id.action_edit:
                 Snackbar.make(mFab, "EDIT", Snackbar.LENGTH_SHORT).show();
+                return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
         }
 
