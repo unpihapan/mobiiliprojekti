@@ -1,6 +1,8 @@
 package com.example.juhana.neverforget;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import link.fls.swipestack.SwipeStack;
@@ -104,10 +107,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
         switch (item.getItemId()) {
             case R.id.action_delete:
-                Snackbar.make(mFab, "DELETE", Snackbar.LENGTH_SHORT).show();
+                showConfirmDeleteDialog();
                 return true;
             case R.id.action_edit:
                 Snackbar.make(mFab, "EDIT", Snackbar.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_upload:
+                Snackbar.make(mFab, "UPLOAD", Snackbar.LENGTH_SHORT).show();
                 return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -170,8 +176,25 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
             return convertView;
         }
+    }
+    // edit question confirmation dialog
+    public void showConfirmDeleteDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(getString(R.string.dialog_delete_list_title, "ListName"));
+        dialogBuilder.setMessage(R.string.dialog_delete_list_message);
+        dialogBuilder.setIcon(R.drawable.ic_delete_black);
+        dialogBuilder.setPositiveButton(R.string.dialog_delete_list_positive_button, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
-
+            }
+        });
+        dialogBuilder.setNegativeButton(R.string.dialog_delete_list_negative_button, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 }
 

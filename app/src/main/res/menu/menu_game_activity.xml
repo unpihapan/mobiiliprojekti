@@ -4,6 +4,11 @@
     tools:context="com.example.juhana.neverforget.GameActivity">
 
     <item
+        android:id="@+id/action_upload"
+        android:icon="@drawable/ic_upload_white"
+        android:title="@string/action_upload"
+        app:showAsAction="ifRoom|withText" />
+    <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_edit_white"
         android:title="@string/action_edit"
