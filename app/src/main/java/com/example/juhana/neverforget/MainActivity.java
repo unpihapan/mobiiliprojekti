@@ -57,31 +57,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
 
-        // fetch data
-        List<CardList> cardLists = db.cardListDao().getCardLists();
-        for (int i = 0; i < cardLists.size(); i++){
-            HashMap<String, String> tempHashMap = new HashMap<>();
-            tempHashMap.put("CardListName", (i + 1) + ". " + cardLists.get(i).getName());
-            tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
-            cardListArray.add(tempHashMap);
-            Log.d("qwerty", String.valueOf(cardLists.get(i).getId()));
-        }
-
         // populate listView
         SimpleAdapter simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
                 new String[]{"CardListName", "CardCount"},
                 new int[]{R.id.tvCardListName, R.id.tvCardCount});
         cardListView.setAdapter(simpleAdapter);
 
-        // Jos ViewListissä on jotain, ei "apu nuolta" tarvita
+
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        refresh();
+        // Nautetaan/piilotetaan apunuoli
         tv1 = (TextView)findViewById(R.id.tv1);
         arrow = (ImageView)findViewById(R.id.arrow);
         if (!cardListArray.isEmpty()){
             tv1.setVisibility(View.GONE);
             arrow.setVisibility(View.GONE);
         }
+        else {
+            tv1.setVisibility(View.VISIBLE);
+            arrow.setVisibility(View.VISIBLE);
+        }
     }
-
     // floating action button click listeners
     @Override
     public void onClick(View v) {
@@ -150,21 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // save cardList
                 db.cardListDao().InsertCardLists(cardList);
 
-                // populate listView
-                HashMap<String, String> tempHashMap = new HashMap<>();
-                List<CardList> cardLists = db.cardListDao().getCardLists();
-                for (int i = 0; i < cardLists.size(); i++){
-                    tempHashMap.put("CardListName", (i + 1) + ". " + cardLists.get(i).getName());
-                    tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
-                }
-                cardListArray.add(tempHashMap);
-
-                // Piilotetaan "apunuoli"
-                if (!cardListArray.isEmpty()){
-                    tv1.setVisibility(View.GONE);
-                    arrow.setVisibility(View.GONE);
-                }
-
                 // Avataan AddActivity
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                 intent.putExtra("EXTRA_MESSAGE", listName);
@@ -180,6 +164,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+    public void refresh (){
+        cardListArray.clear();
+        List<CardList> cardLists = db.cardListDao().getCardLists();
+        for (int i = 0; i < cardLists.size(); i++){
+            HashMap<String, String> tempHashMap = new HashMap<>();
+            tempHashMap.put("CardListName", (i + 1) + ". " + cardLists.get(i).getName());
+            tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
+            cardListArray.add(tempHashMap);
+        }
     }
 
 }
