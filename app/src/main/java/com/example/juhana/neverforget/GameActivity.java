@@ -94,7 +94,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.menu_game_activity, menu);
         return true;
     }
 
@@ -102,14 +102,11 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.menuReset:
-                mSwipeStack.resetStack();
-                Snackbar.make(mFab, R.string.stack_reset, Snackbar.LENGTH_SHORT).show();
+            case R.id.action_delete:
+                Snackbar.make(mFab, "DELETE", Snackbar.LENGTH_SHORT).show();
                 return true;
-            case R.id.menuGitHub:
-                Intent browserIntent = new Intent(
-                        Intent.ACTION_VIEW, Uri.parse("https://github.com/flschweiger/SwipeStack"));
-                startActivity(browserIntent);
+            case R.id.action_edit:
+                Snackbar.make(mFab, "EDIT", Snackbar.LENGTH_SHORT).show();
                 return true;
         }
 

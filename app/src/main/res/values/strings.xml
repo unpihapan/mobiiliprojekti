@@ -2,6 +2,9 @@
     <string name="app_name">NeverForget</string>
     <string name="action_settings">Settings</string>
     <string name="action_done">Done</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
 
     <string name="dialog_create_list_title">Create New List</string>
     <string name="dialog_create_list_message">Enter the name of the list:</string>
