@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private TextView tv1;
     private ImageView arrow;
+    private TextView count;
     ListView cardListView;
     public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
 
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<CardList> cardLists = db.cardListDao().getCardLists();
         for (int i = 0; i < cardLists.size(); i++){
             HashMap<String, String> tempHashMap = new HashMap<>();
-            tempHashMap.put("CardListName", (i + 1) + ". " + cardLists.get(i).getName());
+            tempHashMap.put("CardListName", cardLists.get(i).getName());
             tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
             cardListArray.add(tempHashMap);
         }

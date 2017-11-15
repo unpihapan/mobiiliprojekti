@@ -10,14 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+
         <TextView
             android:id="@+id/tvCardListName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:paddingLeft="10sp"
+            android:layout_toEndOf="@+id/tvIndex_main"
+            android:layout_toRightOf="@+id/tvIndex_main"
             android:text="Card List Name"
             android:textSize="30sp" />
 
@@ -25,8 +26,8 @@
             android:id="@+id/tvCardCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_toEndOf="@+id/tvIndex_main"
+            android:layout_toRightOf="@+id/tvIndex_main"
             android:layout_below="@+id/tvCardListName"
             android:paddingLeft="10sp"
             android:text="Card Count: x"
@@ -42,6 +43,18 @@
             android:layout_marginRight="14dp"
             app:srcCompat="@drawable/ic_disclosure_indicator_black"
             tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/tvIndex_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:minEms="1"
+            android:gravity="center"
+            android:paddingLeft="5sp"
+            android:text="1"
+            android:textSize="40sp"/>
 
     </RelativeLayout>
 </LinearLayout>
