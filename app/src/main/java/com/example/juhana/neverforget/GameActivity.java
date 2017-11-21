@@ -54,7 +54,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         textView = (TextView)findViewById(R.id.textViewCard);
 
 
-
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("EXTRA_MESSAGE");
+        setTitle(title);
 
 
         mButtonLeft.setOnClickListener(this);

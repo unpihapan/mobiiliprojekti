@@ -70,7 +70,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 String name = cardListArray.get(pos).get("CardListName");
-                Toast.makeText(MainActivity.this, name, Toast.LENGTH_LONG).show();
+                //Toast.makeText(MainActivity.this, name, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                intent.putExtra("EXTRA_MESSAGE", name);
+                startActivity(intent);
             }
 
 
