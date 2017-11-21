@@ -19,6 +19,7 @@
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/tvIndex_main"
             android:layout_toRightOf="@+id/tvIndex_main"
+            android:paddingLeft="10sp"
             android:text="Card List Name"
             android:textSize="30sp" />
 
