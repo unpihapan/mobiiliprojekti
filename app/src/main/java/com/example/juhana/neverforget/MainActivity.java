@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
 
     private AppDatabase db;
+    private SimpleAdapter simpleAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         db = AppDatabase.getDatabase(getApplicationContext());
 
         // populate listView
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
+        simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
                 new String[]{"ListIndex", "CardListName", "CardCount"},
                 new int[]{R.id.tvIndex_main, R.id.tvCardListName, R.id.tvCardCount});
         cardListView.setAdapter(simpleAdapter);
@@ -72,7 +73,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 String name = cardListArray.get(pos).get("CardListName");
-                //Toast.makeText(MainActivity.this, name, Toast.LENGTH_LONG).show();
+                if (isFabOpen){
+                    animateFAB();
+                }
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 intent.putExtra("EXTRA_MESSAGE", name);
                 startActivity(intent);
@@ -182,6 +185,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     CardList cardList = new CardList(newListName);
                     db.cardListDao().InsertCardLists(cardList);
 
+                    if (isFabOpen){
+                        animateFAB();
+                    }
+
+
                     // open AddActivity
                     Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                     intent.putExtra("EXTRA_MESSAGE", newListName);
@@ -205,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void refresh (){
         cardListArray.clear();
+        simpleAdapter.notifyDataSetChanged();
         List<CardList> cardLists = db.cardListDao().getCardLists();
         for (int i = 0; i < cardLists.size(); i++){
             HashMap<String, String> tempHashMap = new HashMap<>();
@@ -212,7 +221,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tempHashMap.put("CardListName", cardLists.get(i).getName());
             tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
             cardListArray.add(tempHashMap);
+
         }
+
     }
 
     // checks if given name is unique

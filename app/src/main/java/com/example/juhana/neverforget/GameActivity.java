@@ -45,7 +45,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     private String title;
     private AppDatabase db;
-
+    private int list_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +94,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     // haetaan kortit listan nimen perusteella
     private void getCardsFromList() {
-        int list_id = db.cardListDao().getIdByCardListName(title);
+        list_id = db.cardListDao().getIdByCardListName(title);
         List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
         for (int i = 0; i < cardsInList.size(); i++){
             mData.add(cardsInList.get(i).getQuestion());
@@ -202,12 +202,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     // edit question confirmation dialog
     public void showConfirmDeleteDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setTitle(getString(R.string.dialog_delete_list_title, "ListName"));
+        dialogBuilder.setTitle(getString(R.string.dialog_delete_list_title, title));
         dialogBuilder.setMessage(R.string.dialog_delete_list_message);
         dialogBuilder.setIcon(R.drawable.ic_delete_black);
         dialogBuilder.setPositiveButton(R.string.dialog_delete_list_positive_button, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
+                db.cardListDao().Delete(db.cardListDao().getCardListById(list_id));
+                finish();
             }
         });
         dialogBuilder.setNegativeButton(R.string.dialog_delete_list_negative_button, new DialogInterface.OnClickListener() {
