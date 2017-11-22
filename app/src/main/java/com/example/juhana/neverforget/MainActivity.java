@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -139,46 +141,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // Create list dialog
     public void showCreateListDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+
+        // view
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
-        dialogBuilder.setView(dialogView);
+
+        // dialog builder
+        final AlertDialog d = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setTitle(R.string.dialog_create_list_title)
+                .setMessage(R.string.dialog_create_list_message)
+                .setPositiveButton(R.string.action_done, null)
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
 
         final EditText listNameEditText = (EditText) dialogView.findViewById(R.id.edit1);
-
-        dialogBuilder.setTitle(R.string.dialog_create_list_title);
-        dialogBuilder.setMessage(R.string.dialog_create_list_message);
+        final Toast emptyName = Toast.makeText(MainActivity.this,
+                R.string.dialog_create_list_validation_text, Toast.LENGTH_SHORT);
 
         // done button
-        dialogBuilder.setPositiveButton(R.string.action_done, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 String listName = listNameEditText.getText().toString();
 
-                // close floating action buttons
-                animateFAB();
+                // require name if left empty
+                String newListName = listName;
+                if (newListName.isEmpty()){
+                    emptyName.show();
+                }
 
-                // Luodaan cardList olio
-                CardList cardList = new CardList(listName);
+                // if list name is already taken, rename as <listName (n)>
+                else{
+                    int invalidCount = 1;
+                    while (!listNameValid(newListName)){
+                        newListName = listName + " (" + invalidCount++ + ")";
+                    }
 
-                // save cardList
-                db.cardListDao().InsertCardLists(cardList);
+                    // save cardList
+                    CardList cardList = new CardList(newListName);
+                    db.cardListDao().InsertCardLists(cardList);
 
-                // Avataan AddActivity
-                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("EXTRA_MESSAGE", listName);
-                intent.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(listName));
-                startActivity(intent);
+                    // open AddActivity
+                    Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+                    intent.putExtra("EXTRA_MESSAGE", newListName);
+                    intent.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(newListName));
+                    startActivity(intent);
 
+                    d.cancel();
+                }
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //pass
+
+        // cancel button
+        d.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                // close
+                d.cancel();
             }
         });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
     }
+
     public void refresh (){
         cardListArray.clear();
         List<CardList> cardLists = db.cardListDao().getCardLists();
@@ -188,10 +212,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tempHashMap.put("CardListName", cardLists.get(i).getName());
             tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
             cardListArray.add(tempHashMap);
-
-
         }
     }
 
-
+    // checks if given name is unique
+    private boolean listNameValid(String name){
+        return db.cardListDao().getIdByCardListName(name) == 0;
+    }
 }
