@@ -5,7 +5,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = CardList.class, parentColumns = "id", childColumns = "list_id"))
+@Entity(foreignKeys = @ForeignKey(entity = CardList.class, parentColumns = "id", childColumns = "list_id", onDelete = ForeignKey.CASCADE))
 public class Card {
 
     @PrimaryKey(autoGenerate = true)
