@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -228,7 +229,7 @@ public class AddActivity extends AppCompatActivity {
     // insert cards to cardList
     private void saveCardsToCardList(){
         for (int i = 0; i < cards.size(); i++){
-            db.cardDao().InsertCards(new Card(cardListId, cards.get(i).get("question"), cards.get(i).get("answer")));
+            db.cardDao().InsertCards(new Card(cardListId, cards.get(i).get("Question"), cards.get(i).get("Answer")));
         }
     }
 }
