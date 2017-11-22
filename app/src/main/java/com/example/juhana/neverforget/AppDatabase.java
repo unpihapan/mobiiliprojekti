@@ -1,11 +1,13 @@
 package com.example.juhana.neverforget;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
-@Database(entities = {Card.class, CardList.class}, version = 3)
+@Database(entities = {Card.class, CardList.class}, version = 4)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
