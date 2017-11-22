@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private SwipeStackAdapter mAdapter;
     TextView textView;
 
+    private String title;
+    private AppDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +58,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mFab = (FloatingActionButton) findViewById(R.id.fabAdd);
         textView = (TextView)findViewById(R.id.textViewCard);
 
+        // db
+        db = AppDatabase.getDatabase(getApplicationContext());
 
+
+        // Muutetaan otsikoksi klikatun korttipinon nimi
         Intent intent = getIntent();
-        String title = intent.getStringExtra("EXTRA_MESSAGE");
+        title = intent.getStringExtra("EXTRA_MESSAGE");
         setTitle(title);
 
 
@@ -72,8 +81,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
 
 
-        fillWithTestData();
-
+        //fillWithTestData();
+        getCardsFromList();
 
     }
 
@@ -82,6 +91,17 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             mData.add(getString(R.string.dummy_text) + " " + (x + 1));
         }
     }
+
+    // haetaan kortit listan nimen perusteella
+    private void getCardsFromList() {
+        int list_id = db.cardListDao().getIdByCardListName(title);
+        List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
+        for (int i = 0; i < cardsInList.size(); i++){
+            mData.add(cardsInList.get(i).getQuestion());
+        }
+
+    }
+
 
     @Override
     public void onClick(View v) {
