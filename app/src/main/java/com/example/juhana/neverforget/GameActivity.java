@@ -1,6 +1,7 @@
 package com.example.juhana.neverforget;
 
 
+import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,7 +52,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private String title;
     private AppDatabase db;
     private int list_id;
-    private Animation fab_open;
+    private Animation turn_1, turn_2;
     private boolean isTurned;
 
     @Override
@@ -66,7 +67,11 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         textView = (TextView)findViewById(R.id.textViewCard);
         isTurned = false;
 
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        turn_1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.turn_1);
+        turn_2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.turn_2);
+
+
+
 
 
         // db
@@ -129,15 +134,33 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         } else if (v.equals(mButtonRight)) {
             mSwipeStack.swipeTopViewToRight();
         } else if (v.equals(mFab)) {
-            if (isTurned) {
-                textView.setText(mData.get(mSwipeStack.getCurrentPosition()));
-                isTurned = false;
-            } else if (!isTurned) {
-                textView.setText(mData2.get(mSwipeStack.getCurrentPosition()));
-                isTurned = true;
-            }
+            mSwipeStack.startAnimation(turn_1);
+            turn_1.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
 
-            mSwipeStack.startAnimation(fab_open);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (isTurned) {
+                        textView.setText(mData.get(mSwipeStack.getCurrentPosition()));
+                        isTurned = false;
+                    } else if (!isTurned) {
+                        textView.setText(mData2.get(mSwipeStack.getCurrentPosition()));
+                        isTurned = true;
+                    }
+                    mSwipeStack.startAnimation(turn_2);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+
+            //mSwipeStack.startAnimation(turn_2);
 
 
 
@@ -147,6 +170,11 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             mAdapter.notifyDataSetChanged();
 
         }
+    }
+
+
+    public void onAnimationEnd(Animation animation) {
+
     }
 
 
