@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                String name = cardListArray.get(pos).get("CardListName");
+                String name =  cardListArray.get(pos-1).get("CardListName");
                 if (isFabOpen){
                     animateFAB();
                 }
@@ -253,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cardListArray.clear();
         simpleAdapter.notifyDataSetChanged();
         List<CardList> cardLists = db.cardListDao().getCardLists();
-        //tvHeaderContent.setText(getString(R.string.main_activity_header_content, cardLists.size()));
         TextView tvHeaderContent = findViewById(R.id.headerContent);
         tvHeaderContent.setText(getString(R.string.main_activity_header_content, cardLists.size()));
         for (int i = 0; i < cardLists.size(); i++){
