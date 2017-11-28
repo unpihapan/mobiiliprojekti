@@ -361,6 +361,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         alertDialog.show();
     }
 
+    // upload dialog
     public void showUploadConfirmationDalog(){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle(getString(R.string.dialog_upload_list_title, title));
