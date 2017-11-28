@@ -1,14 +1,18 @@
 package com.example.juhana.neverforget;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,7 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import link.fls.swipestack.SwipeStack;
@@ -40,6 +46,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private SwipeStackAdapter mAdapter;
     TextView textView;
 
+    private String title;
+    private AppDatabase db;
+    private int list_id;
 
 
     @Override
@@ -53,8 +62,14 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mFab = (FloatingActionButton) findViewById(R.id.fabAdd);
         textView = (TextView)findViewById(R.id.textViewCard);
 
+        // db
+        db = AppDatabase.getDatabase(getApplicationContext());
 
 
+        // Muutetaan otsikoksi klikatun korttipinon nimi
+        Intent intent = getIntent();
+        title = intent.getStringExtra("EXTRA_MESSAGE");
+        setTitle(title);
 
 
 
@@ -71,8 +86,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
 
 
-        fillWithTestData();
-
+        //fillWithTestData();
+        getCardsFromList();
 
     }
 
@@ -81,6 +96,17 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             mData.add(getString(R.string.dummy_text) + " " + (x + 1));
         }
     }
+
+    // haetaan kortit listan nimen perusteella
+    private void getCardsFromList() {
+        list_id = db.cardListDao().getIdByCardListName(title);
+        List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
+        for (int i = 0; i < cardsInList.size(); i++){
+            mData.add(cardsInList.get(i).getQuestion());
+        }
+
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -119,7 +145,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.menu_game_activity, menu);
         return true;
     }
 
@@ -127,14 +153,17 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.menuReset:
-                mSwipeStack.resetStack();
-                Snackbar.make(mFab, R.string.stack_reset, Snackbar.LENGTH_SHORT).show();
+            case R.id.action_delete:
+                showConfirmDeleteDialog();
                 return true;
-            case R.id.menuGitHub:
-                Intent browserIntent = new Intent(
-                        Intent.ACTION_VIEW, Uri.parse("https://github.com/flschweiger/SwipeStack"));
-                startActivity(browserIntent);
+            case R.id.action_edit:
+                Snackbar.make(mFab, "EDIT", Snackbar.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_upload:
+                Snackbar.make(mFab, "UPLOAD", Snackbar.LENGTH_SHORT).show();
+                return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
         }
 
@@ -211,8 +240,26 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
             return convertView;
         }
-
-
+    }
+    // edit question confirmation dialog
+    public void showConfirmDeleteDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(getString(R.string.dialog_delete_list_title, title));
+        dialogBuilder.setMessage(R.string.dialog_delete_list_message);
+        dialogBuilder.setIcon(R.drawable.ic_delete_black);
+        dialogBuilder.setPositiveButton(R.string.dialog_delete_list_positive_button, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                db.cardListDao().Delete(db.cardListDao().getCardListById(list_id));
+                finish();
+            }
+        });
+        dialogBuilder.setNegativeButton(R.string.dialog_delete_list_negative_button, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 }
 

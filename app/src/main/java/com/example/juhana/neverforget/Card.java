@@ -1,41 +1,38 @@
 package com.example.juhana.neverforget;
 
-/**
- * Created by Juhana on 31.10.2017.
- */
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 
+@Entity(foreignKeys = @ForeignKey(entity = CardList.class, parentColumns = "id", childColumns = "list_id", onDelete = ForeignKey.CASCADE))
 public class Card {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
-    // private CardList cardList;
+
     private int list_id;
     private String question;
     private String answer;
 
+    @Ignore
     Card() { }
 
-    public Card(String question, String answer) {
+    public Card(int list_id, String question, String answer) {
+        this.list_id = list_id;
         this.question = question;
         this.answer = answer;
     }
 
-    public int getId() { return id;}
+    // setters
     public void setId(int id) { this.id = id;}
+    void setQuestion(String question) {this.question = question;}
+    void setAnswer(String answer) {this.answer = answer;}
+    public void setList_id(int list_id) {this.list_id = list_id;}
 
-    public String getQuestion() { return question;}
-    public void setQuestion(String question) {this.question = question;}
-
-    public String getAnswer() { return answer;}
-    public void setAnswer(String answer) {this.answer = answer;}
-
-
-    /*
-    public CardList getCardlist() {
-        return cardList;
-    }
-
-    public void setCardList(CardList cardList) {
-        this.cardList = cardList;
-    }
-    */
+    // getters
+    public int getId() { return id;}
+    String getQuestion() { return question;}
+    String getAnswer() { return answer;}
+    int getList_id(){return list_id;}
 }

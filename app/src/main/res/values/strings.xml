@@ -2,6 +2,11 @@
     <string name="app_name">NeverForget</string>
     <string name="action_settings">Settings</string>
     <string name="action_done">Done</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
+    <string name="action_upload">Upload</string>
 
     <string name="dialog_create_list_title">Create New List</string>
     <string name="dialog_create_list_message">Enter the name of the list:</string>
@@ -11,9 +16,15 @@
     <string name="dialog_edit_positive_button">EDIT</string>
     <string name="dialog_edit_negative_button">CANCEL</string>
 
+    <string name="dialog_delete_list_title">Delete list %1$s</string>
+    <string name="dialog_delete_list_message"><b>Warning:</b> This list and all the related cards will be deleted permanently.</string>
+    <string name="dialog_delete_list_positive_button">Delete</string>
+    <string name="dialog_delete_list_negative_button">Cancel</string>
+
     <string name="add_activity_edit_text_validation">Please fill both fields.</string>
     <string name="add_activity_card_add_success">Card added to list</string>
     <string name="add_activity_cards_in_list">Cards in List: %1$d</string>
+    <string name="add_activity_title">%1$s: Add Cards</string>
 
     <string name="swipe_left">Swipe left</string>
     <string name="swipe_right">Swipe right</string>
@@ -26,7 +37,4 @@
     <string name="stack_reset">Stack reset!</string>
     <string name="stack_empty">Card stack empty!</string>
     <string name="github">View on GitHub</string>
-
-
-
 </resources>
