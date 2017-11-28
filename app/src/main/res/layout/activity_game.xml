@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:layout_margin="@dimen/margin_fab"
-            android:src="@drawable/ic_add"
+            android:src="@drawable/ic_turn_card"
             app:fabSize="normal"/>
 
     </android.support.design.widget.CoordinatorLayout>
