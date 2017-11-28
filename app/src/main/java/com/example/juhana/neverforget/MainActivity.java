@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // start gameactivity
                 Intent intent = new Intent(MainActivity.this, getFromDB.class );
                 startActivity(intent);
+                animateFAB();
                 break;
             case R.id.fab2:
                 // show create list dialog

@@ -24,7 +24,9 @@
         <activity android:name=".GameActivity"
             android:parentActivityName=".MainActivity">
         </activity>
-        <activity android:name=".getFromDB"/>
+        <activity android:name=".getFromDB"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>
