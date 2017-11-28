@@ -7,11 +7,6 @@
     card_view:cardCornerRadius="@dimen/card_corner_radius"
     card_view:cardElevation="@dimen/elevation_large"
     android:id="@+id/cv">
-    <ViewFlipper
-        android:id="@+id/simpleViewFlipper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,20 +19,6 @@
         android:textSize="44sp"
         android:text="@string/dummy_text"/>
     </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/textViewCard2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="44sp"
-                android:text="Vastaus"/>
-        </RelativeLayout>
-
-    </ViewFlipper>
 
 
 </android.support.v7.widget.CardView>

@@ -42,14 +42,17 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
 
     private ArrayList<String> mData;
+    private ArrayList<String> mData2;
     private SwipeStack mSwipeStack;
     private SwipeStackAdapter mAdapter;
     TextView textView;
+    TextView textView2;
 
     private String title;
     private AppDatabase db;
     private int list_id;
-
+    private Animation fab_open;
+    private boolean isTurned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mButtonRight = (Button) findViewById(R.id.buttonSwipeRight);
         mFab = (FloatingActionButton) findViewById(R.id.fabAdd);
         textView = (TextView)findViewById(R.id.textViewCard);
+        isTurned = false;
+
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+
 
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
@@ -79,6 +86,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
 
         mData = new ArrayList<>();
+        mData2 = new ArrayList<>();
+
+
         mAdapter = new SwipeStackAdapter(mData);
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
@@ -103,6 +113,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
         for (int i = 0; i < cardsInList.size(); i++){
             mData.add(cardsInList.get(i).getQuestion());
+            mData2.add(cardsInList.get(i).getAnswer());
+
         }
 
     }
@@ -110,26 +122,22 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     @Override
     public void onClick(View v) {
+
+
         if (v.equals(mButtonLeft)) {
             mSwipeStack.swipeTopViewToLeft();
         } else if (v.equals(mButtonRight)) {
             mSwipeStack.swipeTopViewToRight();
         } else if (v.equals(mFab)) {
-            //mData.add(getString(R.string.dummy_fab));
-            //mAdapter.notifyDataSetChanged();
-            //mAdapter.getItem(mSwipeStack.getCurrentPosition());
-            //System.out.println(mSwipeStack.getCurrentPosition());
-            //mData.set(mSwipeStack.getCurrentPosition(),"hei");
-            //View mView = mSwipeStack.getTopView();
-            //mViewFlipper.setAutoStart(true);
-            //mViewFlipper.setFlipInterval(1000);
-            //mViewFlipper.startFlipping();
-            //mSwipeStack.setVisibility(View.GONE);
-            System.out.println(mSwipeStack.getChildCount());
-            //mSwipeStack.getChildAt(2).setVisibility(View.GONE);
-            //mSwipeStack.getChildAt(2).setActivated(true);
-            //mView.
-            textView.setText("moi");
+            if (isTurned) {
+                textView.setText(mData.get(mSwipeStack.getCurrentPosition()));
+                isTurned = false;
+            } else if (!isTurned) {
+                textView.setText(mData2.get(mSwipeStack.getCurrentPosition()));
+                isTurned = true;
+            }
+
+            mSwipeStack.startAnimation(fab_open);
 
 
 
@@ -172,6 +180,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     @Override
     public void onViewSwipedToRight(int position) {
+        isTurned = false;
         String swipedElement = mAdapter.getItem(position);
         Toast.makeText(this, getString(R.string.view_swiped_right, swipedElement),
                 Toast.LENGTH_SHORT).show();
@@ -179,6 +188,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     @Override
     public void onViewSwipedToLeft(int position) {
+        isTurned = false;
         String swipedElement = mAdapter.getItem(position);
         Toast.makeText(this, getString(R.string.view_swiped_left, swipedElement),
                 Toast.LENGTH_SHORT).show();
@@ -222,18 +232,11 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 convertView = getLayoutInflater().inflate(R.layout.card, parent, false);
             }
 
-            //TextView textViewCard = (TextView) convertView.findViewById(R.id.textViewCard);
-            //TextView textViewCard2 = (TextView) convertView.findViewById(R.id.textViewCard);
-
-            //textViewCard2.setText(mData.get(position));
-
-            //textViewCard.setText(mData.get(position));
             System.out.println("DATA SET");
-            //mViewFlipper = (ViewFlipper) convertView.findViewById(R.id.simpleViewFlipper);
-
 
             textView = (TextView) convertView.findViewById(R.id.textViewCard);
             textView.setText(mData.get(position));
+
 
 
 
