@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +32,14 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     private Button mButtonLeft, mButtonRight;
     private FloatingActionButton mFab;
+    private ViewFlipper mViewFlipper;
+
 
     private ArrayList<String> mData;
     private SwipeStack mSwipeStack;
     private SwipeStackAdapter mAdapter;
     TextView textView;
+
 
 
     @Override
@@ -48,6 +52,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mButtonRight = (Button) findViewById(R.id.buttonSwipeRight);
         mFab = (FloatingActionButton) findViewById(R.id.fabAdd);
         textView = (TextView)findViewById(R.id.textViewCard);
+
 
 
 
@@ -84,7 +89,27 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         } else if (v.equals(mButtonRight)) {
             mSwipeStack.swipeTopViewToRight();
         } else if (v.equals(mFab)) {
-            mData.add(getString(R.string.dummy_fab));
+            //mData.add(getString(R.string.dummy_fab));
+            //mAdapter.notifyDataSetChanged();
+            //mAdapter.getItem(mSwipeStack.getCurrentPosition());
+            //System.out.println(mSwipeStack.getCurrentPosition());
+            //mData.set(mSwipeStack.getCurrentPosition(),"hei");
+            //View mView = mSwipeStack.getTopView();
+            //mViewFlipper.setAutoStart(true);
+            //mViewFlipper.setFlipInterval(1000);
+            //mViewFlipper.startFlipping();
+            //mSwipeStack.setVisibility(View.GONE);
+            System.out.println(mSwipeStack.getChildCount());
+            //mSwipeStack.getChildAt(2).setVisibility(View.GONE);
+            //mSwipeStack.getChildAt(2).setActivated(true);
+            //mView.
+            textView.setText("moi");
+
+
+
+
+
+
             mAdapter.notifyDataSetChanged();
 
         }
@@ -130,6 +155,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 Toast.LENGTH_SHORT).show();
     }
 
+
+
+
+
     @Override
     public void onStackEmpty() {
         Toast.makeText(this, R.string.stack_empty, Toast.LENGTH_SHORT).show();
@@ -164,8 +193,21 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 convertView = getLayoutInflater().inflate(R.layout.card, parent, false);
             }
 
-            TextView textViewCard = (TextView) convertView.findViewById(R.id.textViewCard);
-            textViewCard.setText(mData.get(position));
+            //TextView textViewCard = (TextView) convertView.findViewById(R.id.textViewCard);
+            //TextView textViewCard2 = (TextView) convertView.findViewById(R.id.textViewCard);
+
+            //textViewCard2.setText(mData.get(position));
+
+            //textViewCard.setText(mData.get(position));
+            System.out.println("DATA SET");
+            //mViewFlipper = (ViewFlipper) convertView.findViewById(R.id.simpleViewFlipper);
+
+
+            textView = (TextView) convertView.findViewById(R.id.textViewCard);
+            textView.setText(mData.get(position));
+
+
+
 
             return convertView;
         }
