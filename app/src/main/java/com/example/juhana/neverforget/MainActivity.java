@@ -1,20 +1,20 @@
 package com.example.juhana.neverforget;
 
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2;
@@ -39,12 +39,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AppDatabase db;
     private SimpleAdapter simpleAdapter;
 
+    View headerView;
+    ObjectAnimator fade;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.main_activity_title));
+            setSupportActionBar(toolbar);
+        }
 
         // component init
         fab = (FloatingActionButton)findViewById(R.id.fab);
@@ -58,6 +65,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab.setOnClickListener(this);
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
+
+        // Inflate the header view and add to listview
+        headerView = LayoutInflater.from(this)
+                .inflate(R.layout.main_activity_header, cardListView, false);
+        cardListView.addHeaderView(headerView, null ,false);
+
+        // prepare the fade in/out animator
+        final TextView tvHeaderTitle = findViewById(R.id.headerTitle);
+        fade =  ObjectAnimator.ofFloat(tvHeaderTitle, "alpha", 0f, 1f);
+        fade.setInterpolator(new DecelerateInterpolator());
+        fade.setDuration(400);
 
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
@@ -82,6 +100,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
 
+        });
+
+        // list view scroll listener
+        cardListView.setOnScrollListener(new AbsListView.OnScrollListener(){
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                // we make sure the list is not null and empty, and the header is visible
+                if (view != null && view.getChildCount() > 0 && firstVisibleItem == 0) {
+
+                    // if we scrolled more than 16dps, we hide the content and display the title
+                    if (view.getChildAt(0).getTop() < -dpToPx(headerView.getHeight())) {
+                        toggleHeader(false, false);
+                    } else {
+                        toggleHeader(true, true);
+                    }
+                } else {
+                    toggleHeader(false, false);
+                }
+            }
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
         });
     }
     @Override
@@ -189,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         animateFAB();
                     }
 
-
                     // open AddActivity
                     Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                     intent.putExtra("EXTRA_MESSAGE", newListName);
@@ -215,19 +253,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cardListArray.clear();
         simpleAdapter.notifyDataSetChanged();
         List<CardList> cardLists = db.cardListDao().getCardLists();
+        //tvHeaderContent.setText(getString(R.string.main_activity_header_content, cardLists.size()));
+        TextView tvHeaderContent = findViewById(R.id.headerContent);
+        tvHeaderContent.setText(getString(R.string.main_activity_header_content, cardLists.size()));
         for (int i = 0; i < cardLists.size(); i++){
             HashMap<String, String> tempHashMap = new HashMap<>();
             tempHashMap.put("ListIndex", String.valueOf(i + 1));
             tempHashMap.put("CardListName", cardLists.get(i).getName());
             tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
             cardListArray.add(tempHashMap);
-
         }
-
     }
 
     // checks if given name is unique
     private boolean listNameValid(String name){
         return db.cardListDao().getIdByCardListName(name) == 0;
+    }
+
+
+    // header toggle
+    private void toggleHeader(boolean visible, boolean force) {
+        if ((force && visible) || (visible && headerView.getAlpha() == 0f)) {
+            fade.setFloatValues(headerView.getAlpha(), 1f);
+            fade.start();
+            if (android.os.Build.VERSION.SDK_INT >= 21){
+                findViewById(R.id.appBarLayout).setElevation(0);
+            }
+        } else if (force || (!visible && headerView.getAlpha() == 1f)){
+            fade.setFloatValues(headerView.getAlpha(), 0f);
+            fade.start();
+            if (android.os.Build.VERSION.SDK_INT >= 21){
+                findViewById(R.id.appBarLayout).setElevation(10);
+            }
+        }
+        // Toggle the visibility of the title.
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(!visible);
+        }
+    }
+
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        return (int)(dp * (displayMetrics.densityDpi / 160f));
     }
 }

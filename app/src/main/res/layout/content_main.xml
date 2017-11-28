@@ -26,7 +26,7 @@
         android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_helparrow"
+        app:srcCompat="@drawable/ic_helparrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.662"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -35,7 +35,7 @@
         app:layout_constraintVertical_bias="1.0" />
     <ListView
         android:id="@+id/lvMain"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
     ></ListView>
 

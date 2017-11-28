@@ -8,6 +8,9 @@
     <string name="action_save">Save</string>
     <string name="action_upload">Upload</string>
 
+    <string name="main_activity_title">Your Lists</string>
+    <string name="main_activity_header_content"><b>Total lists:</b> %1$d</string>
+
     <string name="dialog_create_list_title">Create New List</string>
     <string name="dialog_create_list_message">Enter the name of the list:</string>
     <string name="dialog_create_list_validation_text">Please enter a name</string>
