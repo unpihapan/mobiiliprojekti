@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cardListView.addHeaderView(headerView, null ,false);
 
         // prepare the fade in/out animator
-        final TextView tvHeaderTitle = findViewById(R.id.headerTitle);
+        final TextView tvHeaderTitle = (TextView)findViewById(R.id.headerTitle);
         fade =  ObjectAnimator.ofFloat(tvHeaderTitle, "alpha", 0f, 1f);
         fade.setInterpolator(new DecelerateInterpolator());
         fade.setDuration(400);
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.fab1:
                 // start gameactivity
-                Intent intent = new Intent(this, GameActivity.class);
+                Intent intent = new Intent(MainActivity.this, getFromDB.class );
                 startActivity(intent);
                 break;
             case R.id.fab2:
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cardListArray.clear();
         simpleAdapter.notifyDataSetChanged();
         List<CardList> cardLists = db.cardListDao().getCardLists();
-        TextView tvHeaderContent = findViewById(R.id.headerContent);
+        TextView tvHeaderContent = (TextView)findViewById(R.id.headerContent);
         tvHeaderContent.setText(getString(R.string.main_activity_header_content, cardLists.size()));
         for (int i = 0; i < cardLists.size(); i++){
             HashMap<String, String> tempHashMap = new HashMap<>();
