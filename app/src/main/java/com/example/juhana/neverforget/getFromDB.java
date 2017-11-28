@@ -139,7 +139,7 @@ public class getFromDB extends AppCompatActivity {
             JSONObject json_object = null;
             String question = null;
             String answer = null;
-            HashMap<String, String> cardsHashMap = new HashMap<>();
+            ArrayList<HashMap<String, String>> cardsArrayList = new ArrayList<>();
             try {
                 json_array = new JSONArray(jsonResponse);
             } catch (JSONException e) {
@@ -166,17 +166,28 @@ public class getFromDB extends AppCompatActivity {
                     e.printStackTrace();
                     return;
                 }
+                HashMap<String, String> cardsHashMap = new HashMap<>();
                 cardsHashMap.put("Question", question);
                 cardsHashMap.put("Answer", answer);
+                cardsArrayList.add(cardsHashMap);
+
             }
-
-            CardList cardList = new CardList(listName);
+            String newListName = listName;
+                int invalidCount = 1;
+                while (!listNameValid(newListName)){
+                    newListName = listName + " (" + invalidCount++ + ")";
+                }
+            CardList cardList = new CardList(newListName);
             db.cardListDao().InsertCardLists(cardList);
-            int cardlistID = db.cardListDao().getIdByCardListName(listName);
+            int cardlistID = db.cardListDao().getIdByCardListName(newListName);
 
-            for (int i = 0; i < cardsHashMap.size(); i++){
-                //db.cardDao().InsertCards(new Card(cardlistID, tempHashMap.get(i).get("Question"), tempHashMap.get(i).get("Answer")));
+            for (int i = 0; i < cardsArrayList.size(); i++){
+                db.cardDao().InsertCards(new Card(cardlistID, cardsArrayList.get(i).get("Question"), cardsArrayList.get(i).get("Answer")));
             }
         }
+    }
+    // checks if given name is unique
+    private boolean listNameValid(String name){
+        return db.cardListDao().getIdByCardListName(name) == 0;
     }
 }
