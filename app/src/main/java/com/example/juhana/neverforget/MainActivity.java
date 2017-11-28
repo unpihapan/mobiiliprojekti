@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new int[]{R.id.tvIndex_main, R.id.tvCardListName, R.id.tvCardCount});
         cardListView.setAdapter(simpleAdapter);
 
+
+
         // list item click -> edit card
         cardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

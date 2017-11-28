@@ -21,6 +21,11 @@
     <string name="dialog_delete_list_positive_button">Delete</string>
     <string name="dialog_delete_list_negative_button">Cancel</string>
 
+    <string name="dialog_end_title">No more cards!</string>
+    <string name="dialog_end_message">Right answers %1$d/%2$d</string>
+    <string name="dialog_end_positive_button">Restart</string>
+    <string name="dialog_end_negative_button">Exit</string>
+
     <string name="add_activity_edit_text_validation">Please fill both fields.</string>
     <string name="add_activity_card_add_success">Card added to list</string>
     <string name="add_activity_cards_in_list">Cards in List: %1$d</string>
@@ -32,6 +37,8 @@
     <string name="view_swiped_right">%1$s swiped to right!</string>
     <string name="dummy_text">Test</string>
     <string name="dummy_fab">Fab Test</string>
+
+    <string name="current_card">%1$d/%2$d</string>
 
     <string name="reset">Reset stack</string>
     <string name="stack_reset">Stack reset!</string>

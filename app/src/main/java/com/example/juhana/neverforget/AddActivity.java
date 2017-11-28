@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -40,6 +41,9 @@ public class AddActivity extends AppCompatActivity {
     TextView cardCount;
     public int currentPos;
     int cardListId;
+    int from;
+    int list_id;
+    String hidden_card_id;
 
     private AppDatabase db;
 
@@ -48,8 +52,32 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         Intent intent = getIntent();
+        String title2 = intent.getStringExtra("EXTRA_MESSAGE");
         String title = getString(R.string.add_activity_title, intent.getStringExtra("EXTRA_MESSAGE"));
         setTitle(title);
+
+        from = intent.getIntExtra("FROM", from);
+
+        // db
+        db = AppDatabase.getDatabase(getApplicationContext());
+
+        if(from == 1) {
+            list_id = db.cardListDao().getIdByCardListName(title2);
+            List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
+             for (int i = 0; i < cardsInList.size(); i++){
+                 HashMap<String, String> cardData = new HashMap<>();
+                 Log.d("test", cardsInList.get(i).getQuestion() );
+                 cardData.put("Id", String.valueOf(cardsInList.get(i).getId()));
+                 cardData.put("Question", cardsInList.get(i).getQuestion());
+                 cardData.put("Answer", cardsInList.get(i).getAnswer());
+                 cardData.put("Index", String.valueOf(i + 1));
+                 cards.add(cardData);
+            }
+            for ( int i= 0; i < cards.size(); i++) {
+                Log.d("size", String.valueOf(cards.size()));
+                Log.d("cards", cards.get(i).get("Question"));
+            }
+        }
 
         // component init
         CardListView = (ListView)findViewById(R.id.lv1);
@@ -60,9 +88,6 @@ public class AddActivity extends AppCompatActivity {
         button_delete = (Button)findViewById(R.id.btn_delete);
         button_save = (Button)findViewById(R.id.btn_save);
         cardCount = (TextView)findViewById(R.id.tvCardsInList);
-
-        // db
-        db = AppDatabase.getDatabase(getApplicationContext());
 
         cardCount.setText(getString(R.string.add_activity_cards_in_list, cards.size()));
         cardListId = intent.getIntExtra("CARDLIST_ID", 0);
@@ -148,6 +173,10 @@ public class AddActivity extends AppCompatActivity {
                 cardData.put("Question", questionEditText.getText().toString());
                 cardData.put("Answer", answerEditText.getText().toString());
                 cardData.put("Index", String.valueOf(currentPos + 1));
+                if (from == 1) {
+                    cardData.put("Id", hidden_card_id);
+                }
+
 
                 cards.set(currentPos, cardData);
                 simpleAdapter.notifyDataSetChanged();
@@ -209,6 +238,9 @@ public class AddActivity extends AppCompatActivity {
                 button_save.setVisibility(View.VISIBLE);
                 questionEditText.setText(mapdata.get("Question"));
                 answerEditText.setText(mapdata.get("Answer"));
+                if ( from == 1 ) {
+                    hidden_card_id = mapdata.get("Id");
+                }
             }
         });
         dialogBuilder.setNegativeButton(R.string.dialog_edit_negative_button, new DialogInterface.OnClickListener() {
@@ -228,8 +260,16 @@ public class AddActivity extends AppCompatActivity {
 
     // insert cards to cardList
     private void saveCardsToCardList(){
-        for (int i = 0; i < cards.size(); i++){
-            db.cardDao().InsertCards(new Card(cardListId, cards.get(i).get("Question"), cards.get(i).get("Answer")));
+        if (from == 1) {
+            for (int i = 0; i < cards.size(); i++) {
+
+                Log.d("db", cards.get(i).get("Id"));
+                db.cardDao().updateCardById(cards.get(i).get("Question"), cards.get(i).get("Answer"), Integer.parseInt(cards.get(i).get("Id")));
+            }
+        } else {
+            for (int i = 0; i < cards.size(); i++) {
+                db.cardDao().InsertCards(new Card(cardListId, cards.get(i).get("Question"), cards.get(i).get("Answer")));
+            }
         }
     }
 }
