@@ -360,6 +360,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         alertDialog.show();
     }
 
+
+
     // upload dialog
     public void showUploadConfirmationDialog(boolean enoughCards){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -394,5 +396,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
     }
+
 }
 
+//commit
