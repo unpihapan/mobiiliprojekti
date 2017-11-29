@@ -16,7 +16,7 @@ public interface CardDao {
     List<Card> getCards();
 
     @Query("SELECT * FROM Card WHERE id = :id")
-    List<Card> getCardById(int id);
+    Card getCardById(int id);
 
     @Query("UPDATE Card SET question = :question, answer = :answer WHERE id = :id")
     void updateCardById(String question, String answer, int id);

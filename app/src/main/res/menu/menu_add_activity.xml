@@ -4,6 +4,12 @@
     tools:context="com.example.juhana.neverforget.AddActivity">
 
     <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_edit_white"
+        android:title="@string/action_edit"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
         android:id="@+id/action_done"
         android:icon="@drawable/ic_done_white"
         android:title="@string/action_done"

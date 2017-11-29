@@ -114,6 +114,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        getNewCardsFromList();
+        Log.d("resume", "moi");
+    }
+
     private void fillWithTestData() {
         for (int x = 0; x < 10; x++) {
             mData.add(getString(R.string.dummy_text) + " " + (x + 1));
@@ -123,6 +130,22 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     // haetaan kortit listan nimen perusteella
     private void getCardsFromList() {
         list_id = db.cardListDao().getIdByCardListName(title);
+        setTitle(db.cardListDao().getCardListById(list_id).getName());
+        List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
+        for (int i = 0; i < cardsInList.size(); i++){
+            mData.add(cardsInList.get(i).getQuestion());
+            mData2.add(cardsInList.get(i).getAnswer());
+
+        }
+        totalCards = mData.size();
+        currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
+
+    }
+
+    private void getNewCardsFromList() {
+        mData.clear();
+        mData2.clear();
+        setTitle(db.cardListDao().getCardListById(list_id).getName());
         List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
         for (int i = 0; i < cardsInList.size(); i++){
             mData.add(cardsInList.get(i).getQuestion());
@@ -220,7 +243,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         return super.onOptionsItemSelected(item);
     }
 
-    public void showCreateListDialog() {
+    public void showResultsDialog() {
 
         // view
         //LayoutInflater inflater = this.getLayoutInflater();
@@ -240,9 +263,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mIntent = getIntent();
-                finish();
-                startActivity(mIntent);
+                cardPosition = 1;
+                currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
+                mSwipeStack.resetStack();
+                //Intent mIntent = getIntent();
+                d.cancel();
+                //finish();
+                //startActivity(mIntent);
             }
         });
 
@@ -250,6 +277,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         d.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                d.cancel();
                 finish();
             }
         });
@@ -269,7 +297,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 Toast.LENGTH_SHORT).show();
         if(mData.size() - 1 == position) {
             Toast.makeText(this, R.string.stack_empty, Toast.LENGTH_SHORT).show();
-            showCreateListDialog();
+            showResultsDialog();
         }
     }
 
@@ -285,7 +313,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 Toast.LENGTH_SHORT).show();
         if(mData.size() - 1 == position) {
             Toast.makeText(this, R.string.stack_empty, Toast.LENGTH_SHORT).show();
-            showCreateListDialog();
+            showResultsDialog();
         }
     }
 

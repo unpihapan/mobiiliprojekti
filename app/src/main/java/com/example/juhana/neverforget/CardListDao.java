@@ -20,6 +20,9 @@ public interface CardListDao {
     @Query("Select id FROM CardList WHERE name = :name")
     int getIdByCardListName(String name);
 
+    @Query("UPDATE CardList SET name = :name WHERE id = :id")
+    void updateListById(String name, int id);
+
     @Insert
     void InsertCardLists(CardList... cardlists);
 
