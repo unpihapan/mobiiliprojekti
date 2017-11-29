@@ -137,7 +137,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private void getCardsFromList() {
         list_id = db.cardListDao().getIdByCardListName(title);
         setTitle(db.cardListDao().getCardListById(list_id).getName());
-        List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
+        cardsInList = db.cardDao().getCardsByListId(list_id);
         for (int i = 0; i < cardsInList.size(); i++){
             mData.add(cardsInList.get(i).getQuestion());
             mData2.add(cardsInList.get(i).getAnswer());
@@ -151,8 +151,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private void getNewCardsFromList() {
         mData.clear();
         mData2.clear();
-        setTitle(db.cardListDao().getCardListById(list_id).getName());
-        List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
+        title = db.cardListDao().getCardListById(list_id).getName();
+        setTitle(title);
         cardsInList = db.cardDao().getCardsByListId(list_id);
         for (int i = 0; i < cardsInList.size(); i++){
             mData.add(cardsInList.get(i).getQuestion());
