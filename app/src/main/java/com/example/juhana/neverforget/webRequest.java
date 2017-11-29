@@ -1,11 +1,16 @@
 package com.example.juhana.neverforget;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * Created by Elmeri on 28.11.2017.
@@ -21,7 +26,7 @@ public class webRequest {
 
         try {
             // URL connect
-            URL url = new URL( requestURL);
+            URL url = new URL(requestURL);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();

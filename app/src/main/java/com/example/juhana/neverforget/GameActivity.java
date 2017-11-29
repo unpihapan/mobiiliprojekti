@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -30,7 +31,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +63,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private int answersRight;
     private int totalCards;
     private int cardPosition;
+    List<Card> cardsInList;
+
+    String url = "http://home.tamk.fi/~e4jpiesa/APIs/nfApi.php?action=saveCardlistAndQuestions&";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +129,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     // haetaan kortit listan nimen perusteella
     private void getCardsFromList() {
         list_id = db.cardListDao().getIdByCardListName(title);
-        List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
+        cardsInList = db.cardDao().getCardsByListId(list_id);
         for (int i = 0; i < cardsInList.size(); i++){
             mData.add(cardsInList.get(i).getQuestion());
             mData2.add(cardsInList.get(i).getAnswer());
@@ -211,6 +217,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 return true;
             case R.id.action_upload:
                 showUploadConfirmationDialog(totalCards > 0);
+                createUrlParamsStr();
                 return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -372,8 +379,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
             dialogBuilder.setPositiveButton(R.string.action_upload, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    // TODO: upload function
-                    finish();
+                    new UploadList().execute();
                 }
             });
             dialogBuilder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
@@ -397,6 +403,36 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         alertDialog.show();
     }
 
+    private void createUrlParamsStr(){
+        StringBuilder urlParams = new StringBuilder();
+        urlParams.append(url);
+        urlParams.append("listname='").append(title).append("'&values=");
+        for (int i = 0; i < cardsInList.size(); i++){
+            urlParams.append("((SELECT+LAST_INSERT_ID()),'")
+                    .append(cardsInList.get(i).getQuestion())
+                    .append("','")
+                    .append(cardsInList.get(i).getAnswer())
+                    .append("')");
+            if (i < cardsInList.size()-1){
+                urlParams.append(",");
+            }
+        }
+        url = urlParams.toString().replace(" ", "+");
+    }
+
+    // card list upload async task
+    private class UploadList extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params){
+            // background thread
+            return webRequest.doWebRequest(url);
+        }
+        protected void onPostExecute(String jsonResponse){
+            // UI thread
+            String response = jsonResponse.trim().equals("\"OK\"") ? "List uploaded successfully" : "List upload failed";
+            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+        }
+    }
 }
 
 //commit
