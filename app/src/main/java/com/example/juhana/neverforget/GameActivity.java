@@ -1,21 +1,14 @@
 package com.example.juhana.neverforget;
 
-
-import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,18 +18,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import link.fls.swipestack.SwipeStack;
 
@@ -65,6 +54,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private int cardPosition;
     List<Card> cardsInList;
 
+    long seed = System.nanoTime();
+
     String url = "http://home.tamk.fi/~e4jpiesa/APIs/nfApi.php?action=saveCardlistAndQuestions&";
 
     @Override
@@ -84,20 +75,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         turn_1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.turn_1);
         turn_2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.turn_2);
 
-
-
-
-
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
-
 
         // Muutetaan otsikoksi klikatun korttipinon nimi
         Intent intent = getIntent();
         title = intent.getStringExtra("EXTRA_MESSAGE");
         setTitle(title);
-
-
 
         mButtonLeft.setOnClickListener(this);
         mButtonRight.setOnClickListener(this);
@@ -112,12 +96,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
 
-
-
-
-        //fillWithTestData();
         getCardsFromList();
-
     }
 
     @Override
@@ -145,7 +124,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         }
         totalCards = mData.size();
         currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
-
     }
 
     private void getNewCardsFromList() {
@@ -161,14 +139,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         }
         totalCards = mData.size();
         currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
-
     }
-
 
     @Override
     public void onClick(View v) {
-
-
         if (v.equals(mButtonLeft)) {
             mSwipeStack.swipeTopViewToLeft();
         } else if (v.equals(mButtonRight)) {
@@ -198,25 +172,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
                 }
             });
-
-
-            //mSwipeStack.startAnimation(turn_2);
-
-
-
-
-
-
             mAdapter.notifyDataSetChanged();
-
         }
     }
-
-
-    public void onAnimationEnd(Animation animation) {
-
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -253,11 +211,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     public void showResultsDialog() {
 
-        // view
-        //LayoutInflater inflater = this.getLayoutInflater();
-        //final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
-
-
         // dialog builder
         final AlertDialog d = new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_end_title)
@@ -274,10 +227,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 cardPosition = 1;
                 currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
                 mSwipeStack.resetStack();
-                //Intent mIntent = getIntent();
                 d.cancel();
-                //finish();
-                //startActivity(mIntent);
             }
         });
 
@@ -290,7 +240,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             }
         });
     }
-
 
     @Override
     public void onViewSwipedToRight(int position) {
@@ -325,13 +274,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         }
     }
 
-
-
-
-
     @Override
     public void onStackEmpty() {
-        //Toast.makeText(this, R.string.stack_empty, Toast.LENGTH_SHORT).show();
     }
 
     public class SwipeStackAdapter extends BaseAdapter {
@@ -367,14 +311,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
             textView = (TextView) convertView.findViewById(R.id.textViewCard);
             textView.setText(mData.get(position));
-
-
-
-
-
             return convertView;
         }
     }
+
     // edit question confirmation dialog
     public void showConfirmDeleteDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -395,8 +335,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
     }
-
-
 
     // upload dialog
     public void showUploadConfirmationDialog(boolean enoughCards){
@@ -432,6 +370,16 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         alertDialog.show();
     }
 
+    private void shuffleList(){
+        Collections.shuffle(cardsInList, new Random(seed));
+    }
+
+    private void logList(){
+        for (int i=0;i<cardsInList.size();i++){
+            Log.d("cardsinlist", cardsInList.get(i).getQuestion());
+        }
+    }
+
     private void createUrlParamsStr(){
         StringBuilder urlParams = new StringBuilder();
         urlParams.append(url);
@@ -463,5 +411,3 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         }
     }
 }
-
-//commit
