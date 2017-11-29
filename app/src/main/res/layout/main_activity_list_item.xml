@@ -35,6 +35,7 @@
             android:textSize="15sp" />
 
         <ImageView
+            android:id="@+id/tvBurger"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -42,8 +43,9 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="14dp"
             android:layout_marginRight="14dp"
-            app:srcCompat="@drawable/ic_disclosure_indicator_black"
-            tools:ignore="ContentDescription" />
+            app:srcCompat="@drawable/ic_burger_black"
+            tools:ignore="ContentDescription"
+            android:focusable="false"/>
         <TextView
             android:id="@+id/tvIndex_main"
             android:layout_width="wrap_content"
