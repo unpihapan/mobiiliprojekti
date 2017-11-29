@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background_normal"
         android:gravity="top"
+        android:inputType="textCapSentences|textMultiLine"
         android:hint="Question.../Side A"
         android:lines="4" />
 
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background_normal"
         android:gravity="top"
+        android:inputType="textCapSentences|textMultiLine"
         android:hint="Answer.../Side B"
         android:lines="4" />
     <LinearLayout

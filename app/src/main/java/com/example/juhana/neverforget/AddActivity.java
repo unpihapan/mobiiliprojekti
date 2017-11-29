@@ -344,9 +344,9 @@ public class AddActivity extends AppCompatActivity {
         final AlertDialog d = new AlertDialog.Builder(this)
                 .setView(dialogView)
                 .setTitle(getString(R.string.dialog_edit_list_title, title2))
-                .setMessage(R.string.dialog_create_list_message)
-                .setPositiveButton(R.string.dialog_edit_positive_button, null)
-                .setNegativeButton(R.string.dialog_edit_negative_button, null)
+                .setMessage(R.string.dialog_edit_list_message)
+                .setPositiveButton(R.string.action_save, null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
 
         final EditText listNameEditText = (EditText) dialogView.findViewById(R.id.edit1);
