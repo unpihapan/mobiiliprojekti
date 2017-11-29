@@ -203,15 +203,14 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 showConfirmDeleteDialog();
                 return true;
             case R.id.action_edit:
-                Snackbar.make(mFab, "EDIT", Snackbar.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                 intent.putExtra("EXTRA_MESSAGE", title);
                 intent.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(title));
                 intent.putExtra("FROM", 1);
                 startActivity(intent);
-                //return true;
+                return true;
             case R.id.action_upload:
-                showUploadConfirmationDalog();
+                showUploadConfirmationDialog(totalCards > 0);
                 return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -361,25 +360,43 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         alertDialog.show();
     }
 
+
+
     // upload dialog
-    public void showUploadConfirmationDalog(){
+    public void showUploadConfirmationDialog(boolean enoughCards){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setTitle(getString(R.string.dialog_upload_list_title, title));
-        dialogBuilder.setMessage(R.string.dialog_upload_list_message);
-        dialogBuilder.setIcon(R.drawable.ic_upload_black);
-        dialogBuilder.setPositiveButton(R.string.action_upload, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // TODO: upload function
-                finish();
-            }
-        });
-        dialogBuilder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //pass
-            }
-        });
+        if (enoughCards){
+            dialogBuilder.setTitle(getString(R.string.dialog_upload_list_title, title));
+            dialogBuilder.setMessage(R.string.dialog_upload_list_message);
+            dialogBuilder.setIcon(R.drawable.ic_upload_black);
+
+            dialogBuilder.setPositiveButton(R.string.action_upload, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // TODO: upload function
+                    finish();
+                }
+            });
+            dialogBuilder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    //pass
+                }
+            });
+        }
+        else {
+            dialogBuilder.setTitle(R.string.dialog_upload_list_title_rejected);
+            dialogBuilder.setMessage(R.string.dialog_upload_list_message_rejected);
+            dialogBuilder.setIcon(R.drawable.ic_info_outline_black);
+
+            dialogBuilder.setNegativeButton(R.string.action_close, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    //pass
+                }
+            });
+        }
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
     }
+
 }
 
+//commit

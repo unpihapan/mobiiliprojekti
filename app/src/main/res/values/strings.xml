@@ -7,6 +7,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_save">Save</string>
     <string name="action_upload">Upload</string>
+    <string name="action_close">Close</string>
 
     <string name="main_activity_title">Your Lists</string>
     <string name="main_activity_header_content"><b>Total lists:</b> %1$d</string>
@@ -26,6 +27,8 @@
 
     <string name="dialog_upload_list_title">Upload list %1$s</string>
     <string name="dialog_upload_list_message">Do you want to upload this list for others to download?</string>
+    <string name="dialog_upload_list_title_rejected">Upload rejected</string>
+    <string name="dialog_upload_list_message_rejected">You cannot upload a list without any cards</string>
 
     <string name="add_activity_edit_text_validation">Please fill both fields.</string>
     <string name="add_activity_card_add_success">Card added to list</string>
@@ -50,4 +53,5 @@
     <string name="dialog_end_negative_button">Exit</string>
 
     <string name="current_card">%1$d/%2$d</string>
+
 </resources>

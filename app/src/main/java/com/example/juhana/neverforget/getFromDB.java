@@ -217,6 +217,7 @@ public class getFromDB extends AppCompatActivity {
         final AlertDialog d = new AlertDialog.Builder(this)
                 .setTitle("Download " + listName + " cardlist?")
                 .setMessage(listName + " cardlist will be added to your phone's memory")
+                .setIcon(R.drawable.ic_download_black)
                 .setPositiveButton(R.string.action_done, null)
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
