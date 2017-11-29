@@ -203,13 +203,12 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 showConfirmDeleteDialog();
                 return true;
             case R.id.action_edit:
-                Snackbar.make(mFab, "EDIT", Snackbar.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
                 intent.putExtra("EXTRA_MESSAGE", title);
                 intent.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(title));
                 intent.putExtra("FROM", 1);
                 startActivity(intent);
-                //return true;
+                return true;
             case R.id.action_upload:
                 showUploadConfirmationDalog();
                 return true;

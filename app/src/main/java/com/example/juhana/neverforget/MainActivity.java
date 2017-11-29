@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // start gameactivity
                 Intent intent = new Intent(MainActivity.this, getFromDB.class );
                 startActivity(intent);
+                animateFAB();
                 break;
             case R.id.fab2:
                 // show create list dialog
@@ -195,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setView(dialogView)
                 .setTitle(R.string.dialog_create_list_title)
                 .setMessage(R.string.dialog_create_list_message)
+                .setIcon(R.drawable.ic_add_black)
                 .setPositiveButton(R.string.action_done, null)
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
