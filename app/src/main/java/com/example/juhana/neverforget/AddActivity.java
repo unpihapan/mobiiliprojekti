@@ -111,8 +111,8 @@ public class AddActivity extends AppCompatActivity {
 
         // populate listView
         simpleAdapter = new SimpleAdapter(this, cards, R.layout.list_card_item,
-                new String[] {"Question", "Answer", "Index"},
-                new int[]{R.id.tvquestion, R.id.tvanswer, R.id.tvIndex});
+                new String[] {"Question", "Answer"},
+                new int[]{R.id.tvquestion, R.id.tvanswer});
         CardListView.setAdapter(simpleAdapter);
 
         /*
