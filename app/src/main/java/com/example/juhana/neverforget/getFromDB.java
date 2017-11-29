@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -42,6 +44,7 @@ public class getFromDB extends AppCompatActivity {
         String title = "Download cardlist";
         setTitle(title);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         dbListView = (ListView) findViewById(R.id.lv_db);
         db = AppDatabase.getDatabase(getApplicationContext());
@@ -235,5 +238,15 @@ public class getFromDB extends AppCompatActivity {
                 d.cancel();
             }
         });
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
