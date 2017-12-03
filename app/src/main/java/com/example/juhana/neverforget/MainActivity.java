@@ -2,15 +2,16 @@ package com.example.juhana.neverforget;
 
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -18,7 +19,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -100,12 +100,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 menu = (ImageView) v.findViewById(R.id.tvBurger);
                 menu.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View arg0) {
-                        String name123 = cardListArray.get(position).get("CardListName");
-                        int list_id = db.cardListDao().getIdByCardListName(name123);
-                        dropDownMenuList(list_id);
+                        String name = cardListArray.get(position).get("CardListName");
+                        int list_id = db.cardListDao().getIdByCardListName(name);
+                        popupMenuList(list_id, position);
                     }
                 });
                 return v;
@@ -329,10 +328,137 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return (int)(dp * (displayMetrics.densityDpi / 160f));
     }
-    public void dropDownMenuList(int list_id){
+    public void alertDialog (final int list_id, String name){
 
-        // Delete cardlist
-        db.cardListDao().Delete(db.cardListDao().getCardListById(list_id));
-        refresh();
+        // view
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
+
+        // dialog builder
+        final AlertDialog d = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setTitle("Set new name")
+                .setMessage("Enter new name for list " + name)
+                .setPositiveButton(R.string.action_done, null)
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
+
+        final EditText listNameEditText = (EditText) dialogView.findViewById(R.id.edit1);
+        final Toast emptyName = Toast.makeText(MainActivity.this,
+                R.string.dialog_create_list_validation_text, Toast.LENGTH_SHORT);
+
+        // done button
+        d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String listName = listNameEditText.getText().toString();
+
+                // require name if left empty
+                String newListName = listName;
+                if (newListName.isEmpty()){
+                    emptyName.show();
+                }
+
+                // if list name is already taken, rename as <listName (n)>
+                else {
+                    int invalidCount = 1;
+                    while (!listNameValid(newListName)) {
+                        newListName = listName + " (" + invalidCount++ + ")";
+                    }
+                }
+                db.cardListDao().updateListById(newListName, list_id);
+                refresh();
+                d.cancel();
+            }
+        });
+        // cancel button
+        d.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                // close
+                d.cancel();
+            }
+        });
+    return;
+    }
+    public void popupMenuList(final int list_id, final int position){
+
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(MainActivity.this, cardListView.getChildAt(position), Gravity.RIGHT);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater()
+                .inflate(R.menu.popup_menu, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                String name =  cardListArray.get(position).get("CardListName");
+                //Switch case for popup menu items
+                switch (id){
+                    case R.id.open_list:
+                        if (isFabOpen){
+                            animateFAB();
+                        }
+                        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                        intent.putExtra("EXTRA_MESSAGE", name);
+                        startActivity(intent);
+                        break;
+                    case R.id.edit_list:
+                        Intent intent_edit = new Intent(getApplicationContext(), AddActivity.class);
+                        intent_edit.putExtra("EXTRA_MESSAGE", name);
+                        intent_edit.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(name));
+                        intent_edit.putExtra("FROM", 1);
+                        startActivity(intent_edit);
+                        refresh();
+                        break;
+                    case R.id.rename_list:
+                        alertDialog(list_id, name);
+                        break;
+                    case R.id.delete_list:
+                        deleteListDialog(name, list_id);
+                        break;
+                }
+                Toast.makeText(
+                        MainActivity.this,
+                        "You Clicked : " + item.getTitle(),
+                        Toast.LENGTH_SHORT
+                ).show();
+                return true;
+            }
+        });
+        popup.show(); //showing popup menu*/
+    }
+    void deleteListDialog (String name, final int list_id){
+        // view
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
+
+        // dialog builder
+        final AlertDialog d = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_delete_list_title, name))
+                .setMessage(R.string.dialog_delete_list_message)
+                .setIcon(R.drawable.ic_delete_black)
+                .setPositiveButton(R.string.action_done, null)
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
+        // Delete button
+        d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                db.cardListDao().Delete(db.cardListDao().getCardListById(list_id));
+                refresh();
+                d.cancel();
+            }
+        });
+        // cancel button
+        d.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                // close
+                d.cancel();
+            }
+        });
+        return;
     }
 }
