@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/open_list"
+        android:title="Open"/>
+
+    <item
+        android:id="@+id/edit_list"
+        android:title="Edit"/>
+
+    <item
+        android:id="@+id/rename_list"
+        android:title="Rename"/>
+
+    <item
+        android:id="@+id/delete_list"
+        android:title="Delete"/>
+</menu>
