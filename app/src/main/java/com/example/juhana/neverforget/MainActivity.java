@@ -2,19 +2,23 @@ package com.example.juhana.neverforget;
 
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView arrow;
     ListView cardListView;
     public ArrayList<HashMap<String, String>> cardListArray = new ArrayList<>();
+    private ImageView menu;
+    View menu_button;
 
     private AppDatabase db;
     private SimpleAdapter simpleAdapter;
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .inflate(R.layout.main_activity_header, cardListView, false);
         cardListView.addHeaderView(headerView, null ,false);
 
+
         // prepare the fade in/out animator
         final TextView tvHeaderTitle = (TextView)findViewById(R.id.headerTitle);
         fade =  ObjectAnimator.ofFloat(tvHeaderTitle, "alpha", 0f, 1f);
@@ -83,9 +90,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // populate listView
         simpleAdapter = new SimpleAdapter(this, cardListArray, R.layout.main_activity_list_item,
                 new String[]{"ListIndex", "CardListName", "CardCount"},
-                new int[]{R.id.tvIndex_main, R.id.tvCardListName, R.id.tvCardCount});
-        cardListView.setAdapter(simpleAdapter);
+                new int[]{R.id.tvIndex_main, R.id.tvCardListName, R.id.tvCardCount
+                }){
 
+            @Override
+            public View getView (final int position, View convertView, ViewGroup parent)
+            {
+                View v = super.getView(position, convertView, parent);
+
+                menu = (ImageView) v.findViewById(R.id.tvBurger);
+                menu.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View arg0) {
+                        String name123 = cardListArray.get(position).get("CardListName");
+                        int list_id = db.cardListDao().getIdByCardListName(name123);
+                        dropDownMenuList(list_id);
+                    }
+                });
+                return v;
+            }
+
+
+
+        };
+        cardListView.setAdapter(simpleAdapter);
 
 
         // list item click -> edit card
@@ -103,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         });
+
 
         // list view scroll listener
         cardListView.setOnScrollListener(new AbsListView.OnScrollListener(){
@@ -298,5 +328,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return (int)(dp * (displayMetrics.densityDpi / 160f));
+    }
+    public void dropDownMenuList(int list_id){
+
+        // Delete cardlist
+        db.cardListDao().Delete(db.cardListDao().getCardListById(list_id));
+        refresh();
     }
 }
