@@ -80,7 +80,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
         // Muutetaan otsikoksi klikatun korttipinon nimi
         Intent intent = getIntent();
-        title = intent.getStringExtra("EXTRA_MESSAGE");
+        title = intent.getStringExtra("LIST_NAME");
         setTitle(title);
 
         mButtonLeft.setOnClickListener(this);
@@ -192,9 +192,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 return true;
             case R.id.action_edit:
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("EXTRA_MESSAGE", title);
-                intent.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(title));
-                intent.putExtra("FROM", 1);
+                intent.putExtra("LIST_NAME", title);
+                intent.putExtra("LIST_ID", db.cardListDao().getIdByCardListName(title));
+                intent.putExtra("EDIT_MODE", true);
                 startActivity(intent);
                 return true;
             case R.id.action_upload:

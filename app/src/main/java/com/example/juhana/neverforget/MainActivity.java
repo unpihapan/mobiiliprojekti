@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     animateFAB();
                 }
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra("EXTRA_MESSAGE", name);
+                intent.putExtra("LIST_NAME", name);
                 startActivity(intent);
             }
 
@@ -263,8 +263,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     // open AddActivity
                     Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                    intent.putExtra("EXTRA_MESSAGE", newListName);
-                    intent.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(newListName));
+                    intent.putExtra("LIST_NAME", newListName);
+                    intent.putExtra("LIST_ID", db.cardListDao().getIdByCardListName(newListName));
+                    intent.putExtra("EDIT_MODE", false);
                     startActivity(intent);
 
                     d.cancel();
@@ -401,14 +402,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             animateFAB();
                         }
                         Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                        intent.putExtra("EXTRA_MESSAGE", name);
+                        intent.putExtra("LIST_NAME", name);
                         startActivity(intent);
                         break;
                     case R.id.edit_list:
                         Intent intent_edit = new Intent(getApplicationContext(), AddActivity.class);
-                        intent_edit.putExtra("EXTRA_MESSAGE", name);
-                        intent_edit.putExtra("CARDLIST_ID", db.cardListDao().getIdByCardListName(name));
-                        intent_edit.putExtra("FROM", 1);
+                        intent_edit.putExtra("LIST_NAME", name);
+                        intent_edit.putExtra("LIST_ID", db.cardListDao().getIdByCardListName(name));
+                        intent_edit.putExtra("EDIT_MODE", true);
                         startActivity(intent_edit);
                         refresh();
                         break;

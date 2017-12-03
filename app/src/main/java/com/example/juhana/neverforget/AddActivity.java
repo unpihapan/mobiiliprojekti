@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,14 +44,13 @@ public class AddActivity extends AppCompatActivity {
     TextView cardCount;
     public int currentPos;
     int cardListId;
-    int from;
+    boolean editMode;
     int list_id;
     String hidden_card_id;
     private ArrayList<Integer> cardsToDelete;
     int deletePos;
     int updatePos;
-    String title2;
-
+    String listName;
 
     private AppDatabase db;
 
@@ -60,39 +58,35 @@ public class AddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        // get database instance
+        db = AppDatabase.getDatabase(getApplicationContext());
+
+        // get data between intents
         Intent intent = getIntent();
-        from = intent.getIntExtra("FROM", from);
-        title2 = intent.getStringExtra("EXTRA_MESSAGE");
-        if (from == 1) {
-            String title = getString(R.string.add_activity_title_edit, intent.getStringExtra("EXTRA_MESSAGE"));
+        editMode = intent.getBooleanExtra("EDIT_MODE", editMode);
+        listName = intent.getStringExtra("LIST_NAME");
+
+        // set title based on parent intent
+        if (editMode) {
+            String title = getString(R.string.add_activity_title_edit, listName);
             setTitle(title);
         } else {
-            String title = getString(R.string.add_activity_title, intent.getStringExtra("EXTRA_MESSAGE"));
+            String title = getString(R.string.add_activity_title, listName);
             setTitle(title);
         }
 
-        cardsToDelete = new ArrayList<>();
-
-
-
-        // db
-        db = AppDatabase.getDatabase(getApplicationContext());
-
-        if(from == 1) {
-            list_id = db.cardListDao().getIdByCardListName(title2);
+        // get card data if parent intent is GameActivity
+        if(editMode) {
+            list_id = db.cardListDao().getIdByCardListName(listName);
             List<Card> cardsInList = db.cardDao().getCardsByListId(list_id);
-             for (int i = 0; i < cardsInList.size(); i++){
-                 HashMap<String, String> cardData = new HashMap<>();
-                 Log.d("test", cardsInList.get(i).getQuestion() );
-                 cardData.put("Id", String.valueOf(cardsInList.get(i).getId()));
-                 cardData.put("Question", cardsInList.get(i).getQuestion());
-                 cardData.put("Answer", cardsInList.get(i).getAnswer());
-                 cardData.put("Index", String.valueOf(i + 1));
-                 cards.add(cardData);
-            }
-            for ( int i= 0; i < cards.size(); i++) {
-                Log.d("size", String.valueOf(cards.size()));
-                Log.d("cards", cards.get(i).get("Question"));
+            for (int i = 0; i < cardsInList.size(); i++){
+                HashMap<String, String> cardData = new HashMap<>();
+                cardData.put("Id", String.valueOf(cardsInList.get(i).getId()));
+                cardData.put("Question", cardsInList.get(i).getQuestion());
+                cardData.put("Answer", cardsInList.get(i).getAnswer());
+                cardData.put("Index", String.valueOf(i + 1));
+                cards.add(cardData);
             }
         }
 
@@ -106,8 +100,9 @@ public class AddActivity extends AppCompatActivity {
         button_save = (Button)findViewById(R.id.btn_save);
         cardCount = (TextView)findViewById(R.id.tvCardsInList);
 
+        cardsToDelete = new ArrayList<>();
         cardCount.setText(getString(R.string.add_activity_cards_in_list, cards.size()));
-        cardListId = intent.getIntExtra("CARDLIST_ID", 0);
+        cardListId = intent.getIntExtra("LIST_ID", 0);
 
         // populate listView
         simpleAdapter = new SimpleAdapter(this, cards, R.layout.list_card_item,
@@ -124,7 +119,7 @@ public class AddActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // validation
                 if (!TextUtils.isEmpty(questionEditText.getText()) && !TextUtils.isEmpty(answerEditText.getText())) {
-                    if (from == 1) {
+                    if (editMode) {
                         HashMap<String, String> newCardData = new HashMap<>();
                         newCardData.put("Question", questionEditText.getText().toString());
                         newCardData.put("Answer", answerEditText.getText().toString());
@@ -176,7 +171,7 @@ public class AddActivity extends AppCompatActivity {
             @Override
 
             public void onClick(View v) {
-                if (from == 1 ) {
+                if (editMode) {
                     if (hidden_card_id == null) {
                         cardsToAdd.remove(deletePos);
                     } else {
@@ -193,7 +188,6 @@ public class AddActivity extends AppCompatActivity {
                 button_cancel.setVisibility(View.INVISIBLE);
                 button_delete.setVisibility(View.INVISIBLE);
                 button_save.setVisibility(View.GONE);
-
             }
         });
 
@@ -201,7 +195,7 @@ public class AddActivity extends AppCompatActivity {
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (from == 1) {
+                if (editMode) {
                     if (hidden_card_id == null) {
                         HashMap<String, String> newCardData = new HashMap<>();
                         newCardData.put("Question", questionEditText.getText().toString());
@@ -221,8 +215,6 @@ public class AddActivity extends AppCompatActivity {
                 cardData.put("Question", questionEditText.getText().toString());
                 cardData.put("Answer", answerEditText.getText().toString());
                 cardData.put("Index", String.valueOf(currentPos + 1));
-
-
 
                 cards.set(currentPos, cardData);
                 simpleAdapter.notifyDataSetChanged();
@@ -245,13 +237,11 @@ public class AddActivity extends AppCompatActivity {
                 HashMap<String, String> selectedItem = cards.get(pos);
                 showEditCardDialog(selectedItem);
             }
-
-
         });
         // OnClick listeners end
-    }
+    } // onCreate End
 
-    // navbar buttons
+    // navBar buttons
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -264,7 +254,6 @@ public class AddActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            // save cards and return to main activity
             case R.id.action_edit:
                 showEditListDialog();
                 return true;
@@ -277,11 +266,11 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    // edit question confirmation dialog
+    // edit card confirmation dialog
     public void showEditCardDialog(final HashMap<String, String> mapdata) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(R.string.dialog_edit_card_body);
-        dialogBuilder.setPositiveButton(R.string.dialog_edit_positive_button, new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton(R.string.action_edit, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 button_add.setVisibility(View.GONE);
                 button_cancel.setVisibility(View.VISIBLE);
@@ -289,12 +278,12 @@ public class AddActivity extends AppCompatActivity {
                 button_save.setVisibility(View.VISIBLE);
                 questionEditText.setText(mapdata.get("Question"));
                 answerEditText.setText(mapdata.get("Answer"));
-                if ( from == 1 ) {
+                if (editMode) {
                     hidden_card_id = mapdata.get("Id");
                 }
             }
         });
-        dialogBuilder.setNegativeButton(R.string.dialog_edit_negative_button, new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //pass
             }
@@ -306,15 +295,15 @@ public class AddActivity extends AppCompatActivity {
     public static void hideKeyboard (Activity activity, View view)
     {
         InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+        if (view.getApplicationWindowToken() != null && imm != null){
+            imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+        }
     }
 
     // insert cards to cardList
     private void saveCardsToCardList(){
-        if (from == 1) {
-           for (int i = 0; i < cardsToUpdate.size(); i++) {
-
-                //Log.d("db", cards.get(i).get("Id"));
+        if (editMode) {
+            for (int i = 0; i < cardsToUpdate.size(); i++) {
                 db.cardDao().updateCardById(cardsToUpdate.get(i).get("Question"), cardsToUpdate.get(i).get("Answer"), Integer.parseInt(cardsToUpdate.get(i).get("Id")));
             }
             for (int i = 0; i < cardsToAdd.size(); i++) {
@@ -330,6 +319,7 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
+    // check if list name is not in use
     private boolean listNameValid(String name){
         return db.cardListDao().getIdByCardListName(name) == 0;
     }
@@ -343,7 +333,7 @@ public class AddActivity extends AppCompatActivity {
         // dialog builder
         final AlertDialog d = new AlertDialog.Builder(this)
                 .setView(dialogView)
-                .setTitle(getString(R.string.dialog_edit_list_title, title2))
+                .setTitle(getString(R.string.dialog_edit_list_title, listName))
                 .setMessage(R.string.dialog_edit_list_message)
                 .setPositiveButton(R.string.action_save, null)
                 .setNegativeButton(R.string.action_cancel, null)
@@ -373,11 +363,9 @@ public class AddActivity extends AppCompatActivity {
                     }
 
                     // save cardList
-                    CardList cardList = new CardList(newListName);
-                    db.cardListDao().updateListById(newListName, db.cardListDao().getIdByCardListName(title2));
-                    title2 = newListName;
-
-                    if (from == 1) {
+                    db.cardListDao().updateListById(newListName, db.cardListDao().getIdByCardListName(listName));
+                    
+                    if (editMode) {
                         String title = getString(R.string.add_activity_title_edit, newListName);
                         setTitle(title);
                     } else {
@@ -386,7 +374,6 @@ public class AddActivity extends AppCompatActivity {
                     }
 
                     d.cancel();
-                    // open AddActivity
                 }
             }
         });
@@ -400,5 +387,4 @@ public class AddActivity extends AppCompatActivity {
             }
         });
     }
-
 }

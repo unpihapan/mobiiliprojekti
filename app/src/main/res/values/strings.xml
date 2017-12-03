@@ -22,8 +22,6 @@
 
 
     <string name="dialog_edit_card_body">Do you want to edit this card?</string>
-    <string name="dialog_edit_positive_button">EDIT</string>
-    <string name="dialog_edit_negative_button">CANCEL</string>
 
     <string name="dialog_delete_list_title">Delete list %1$s</string>
     <string name="dialog_delete_list_message"><b>Warning:</b> This list and all the related cards will be deleted permanently.</string>
