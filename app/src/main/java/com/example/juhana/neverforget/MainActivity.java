@@ -329,6 +329,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return (int)(dp * (displayMetrics.densityDpi / 160f));
     }
+    // Dialog for renaming cardlist
     public void alertDialog (final int list_id, String name){
 
         // view
@@ -420,11 +421,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         deleteListDialog(name, list_id);
                         break;
                 }
-                Toast.makeText(
-                        MainActivity.this,
-                        "You Clicked : " + item.getTitle(),
-                        Toast.LENGTH_SHORT
-                ).show();
                 return true;
             }
         });
