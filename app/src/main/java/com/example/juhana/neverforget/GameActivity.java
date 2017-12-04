@@ -20,7 +20,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +32,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     private Button mButtonLeft, mButtonRight;
     private FloatingActionButton mFab;
-    private ViewFlipper mViewFlipper;
-
-
     private ArrayList<String> mData;
     private ArrayList<String> mData2;
     private SwipeStack mSwipeStack;
@@ -48,6 +44,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private int list_id;
     private Animation turn_1, turn_2;
     private boolean isTurned;
+    boolean shouldExecuteOnResume;
+
 
     private int answersRight;
     private int totalCards;
@@ -70,10 +68,12 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         textView = (TextView)findViewById(R.id.textViewCard);
         currentCard = (TextView)findViewById(R.id.textView);
         isTurned = false;
+        shouldExecuteOnResume = false;
         answersRight = 0;
         cardPosition = 1;
         turn_1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.turn_1);
         turn_2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.turn_2);
+
 
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
@@ -95,21 +95,19 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mAdapter = new SwipeStackAdapter(mData);
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
-
         getCardsFromList();
+
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        getNewCardsFromList();
-        Log.d("resume", "moi");
-    }
-
-    private void fillWithTestData() {
-        for (int x = 0; x < 10; x++) {
-            mData.add(getString(R.string.dummy_text) + " " + (x + 1));
+        if(shouldExecuteOnResume){
+            getNewCardsFromList();
+        } else {
+            shouldExecuteOnResume = true;
         }
+
     }
 
     // haetaan kortit listan nimen perusteella
@@ -117,13 +115,24 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         list_id = db.cardListDao().getIdByCardListName(title);
         setTitle(db.cardListDao().getCardListById(list_id).getName());
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        for (int i = 0; i < cardsInList.size(); i++){
-            mData.add(cardsInList.get(i).getQuestion());
-            mData2.add(cardsInList.get(i).getAnswer());
+        shuffleList();
+        Log.d("0 before cards", Integer.toString(cardsInList.size()));
+        if (cardsInList.size() == 0) {
+            currentCard.setText("There are no cards in this list, add cards from edit menu!");
+            Log.d("0 cards", Integer.toString(cardsInList.size()));
+
+
+        } else {
+            for (int i = 0; i < cardsInList.size(); i++) {
+                mData.add(cardsInList.get(i).getQuestion());
+                mData2.add(cardsInList.get(i).getAnswer());
+
+            }
+            totalCards = mData.size();
+            currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
+            Log.d("0 more cards", Integer.toString(cardsInList.size()));
 
         }
-        totalCards = mData.size();
-        currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
     }
 
     private void getNewCardsFromList() {
@@ -132,13 +141,26 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         title = db.cardListDao().getCardListById(list_id).getName();
         setTitle(title);
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        for (int i = 0; i < cardsInList.size(); i++){
-            mData.add(cardsInList.get(i).getQuestion());
-            mData2.add(cardsInList.get(i).getAnswer());
+        shuffleList();
+        if ( cardsInList.size() == 0 ) {
+            currentCard.setText(R.string.no_cards_in_list);
+        } else {
+            for (int i = 0; i < cardsInList.size(); i++) {
+                mData.add(cardsInList.get(i).getQuestion());
+                mData2.add(cardsInList.get(i).getAnswer());
 
+            }
+            totalCards = mData.size();
+            currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
+            Log.d("0 more cards", String.valueOf(isTurned));
+
+            if (!isTurned) {
+                textView.setText(mData.get(mSwipeStack.getCurrentPosition()));
+            } else if (isTurned) {
+                textView.setText(mData2.get(mSwipeStack.getCurrentPosition()));
+            }
         }
-        totalCards = mData.size();
-        currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
+
     }
 
     @Override
