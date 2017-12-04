@@ -7,8 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,10 +30,9 @@ import link.fls.swipestack.SwipeStack;
 
 public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeStackListener, View.OnClickListener {
 
-    private Button mButtonLeft, mButtonRight;
     private FloatingActionButton mFab;
-    private ArrayList<String> mData;
-    private ArrayList<String> mData2;
+    private ArrayList<String> questions;
+    private ArrayList<String> answers;
     private SwipeStack mSwipeStack;
     private SwipeStackAdapter mAdapter;
     TextView textView;
@@ -51,6 +50,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private int totalCards;
     private int cardPosition;
     List<Card> cardsInList;
+    Toast answerResultToast;
 
     long seed = System.nanoTime();
 
@@ -61,9 +61,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        //component init
         mSwipeStack = (SwipeStack) findViewById(R.id.swipeStack);
-        mButtonLeft = (Button) findViewById(R.id.buttonSwipeLeft);
-        mButtonRight = (Button) findViewById(R.id.buttonSwipeRight);
         mFab = (FloatingActionButton) findViewById(R.id.fabAdd);
         textView = (TextView)findViewById(R.id.textViewCard);
         currentCard = (TextView)findViewById(R.id.textView);
@@ -78,21 +77,21 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
 
-        // Muutetaan otsikoksi klikatun korttipinon nimi
+        // set title based on tapped cardlist
         Intent intent = getIntent();
         title = intent.getStringExtra("LIST_NAME");
         setTitle(title);
 
-        mButtonLeft.setOnClickListener(this);
-        mButtonRight.setOnClickListener(this);
         mFab.setOnClickListener(this);
 
 
-        mData = new ArrayList<>();
-        mData2 = new ArrayList<>();
+        questions = new ArrayList<>();
+        answers = new ArrayList<>();
+
+        answerResultToast = Toast.makeText(GameActivity.this, null, Toast.LENGTH_SHORT);
 
 
-        mAdapter = new SwipeStackAdapter(mData);
+        mAdapter = new SwipeStackAdapter(questions);
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
         getCardsFromList();
@@ -103,41 +102,39 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     public void onResume(){
         super.onResume();
         if(shouldExecuteOnResume){
-            getNewCardsFromList();
+            getUpdatedCardsFromList();
         } else {
             shouldExecuteOnResume = true;
         }
 
     }
 
-    // haetaan kortit listan nimen perusteella
+    // get cards based on the name of the selected list
     private void getCardsFromList() {
         list_id = db.cardListDao().getIdByCardListName(title);
         setTitle(db.cardListDao().getCardListById(list_id).getName());
         cardsInList = db.cardDao().getCardsByListId(list_id);
         shuffleList();
-        Log.d("0 before cards", Integer.toString(cardsInList.size()));
         if (cardsInList.size() == 0) {
-            currentCard.setText("There are no cards in this list, add cards from edit menu!");
-            Log.d("0 cards", Integer.toString(cardsInList.size()));
+            currentCard.setText(R.string.no_cards_in_list);
 
 
         } else {
             for (int i = 0; i < cardsInList.size(); i++) {
-                mData.add(cardsInList.get(i).getQuestion());
-                mData2.add(cardsInList.get(i).getAnswer());
+                questions.add(cardsInList.get(i).getQuestion());
+                answers.add(cardsInList.get(i).getAnswer());
 
             }
-            totalCards = mData.size();
+            totalCards = questions.size();
             currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
-            Log.d("0 more cards", Integer.toString(cardsInList.size()));
 
         }
     }
 
-    private void getNewCardsFromList() {
-        mData.clear();
-        mData2.clear();
+    //updating cards, when coming back from edit mode
+    private void getUpdatedCardsFromList() {
+        questions.clear();
+        answers.clear();
         title = db.cardListDao().getCardListById(list_id).getName();
         setTitle(title);
         cardsInList = db.cardDao().getCardsByListId(list_id);
@@ -146,30 +143,28 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             currentCard.setText(R.string.no_cards_in_list);
         } else {
             for (int i = 0; i < cardsInList.size(); i++) {
-                mData.add(cardsInList.get(i).getQuestion());
-                mData2.add(cardsInList.get(i).getAnswer());
+                questions.add(cardsInList.get(i).getQuestion());
+                answers.add(cardsInList.get(i).getAnswer());
 
             }
-            totalCards = mData.size();
+            totalCards = questions.size();
             currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
-            Log.d("0 more cards", String.valueOf(isTurned));
 
             if (!isTurned) {
-                textView.setText(mData.get(mSwipeStack.getCurrentPosition()));
+                setCardFontSize(questions.get(mSwipeStack.getCurrentPosition()).length());
+                textView.setText(questions.get(mSwipeStack.getCurrentPosition()));
             } else if (isTurned) {
-                textView.setText(mData2.get(mSwipeStack.getCurrentPosition()));
+                setCardFontSize(answers.get(mSwipeStack.getCurrentPosition()).length());
+                textView.setText(answers.get(mSwipeStack.getCurrentPosition()));
             }
         }
 
     }
 
+    //handle card turn when button is pressed
     @Override
     public void onClick(View v) {
-        if (v.equals(mButtonLeft)) {
-            mSwipeStack.swipeTopViewToLeft();
-        } else if (v.equals(mButtonRight)) {
-            mSwipeStack.swipeTopViewToRight();
-        } else if (v.equals(mFab)) {
+        if (v.equals(mFab)) {
             mSwipeStack.startAnimation(turn_1);
             turn_1.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -180,10 +175,23 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     if (isTurned) {
-                        textView.setText(mData.get(mSwipeStack.getCurrentPosition()));
+                        setCardFontSize(questions.get(mSwipeStack.getCurrentPosition()).length());
+                        if (questions.get(mSwipeStack.getCurrentPosition()).length() < 25) {
+                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
+                        } else if ( questions.get(mSwipeStack.getCurrentPosition()).length() < 50 && questions.get(mSwipeStack.getCurrentPosition()).length() > 25) {
+                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
+                        }
+                        textView.setText(questions.get(mSwipeStack.getCurrentPosition()));
                         isTurned = false;
                     } else if (!isTurned) {
-                        textView.setText(mData2.get(mSwipeStack.getCurrentPosition()));
+                        setCardFontSize(answers.get(mSwipeStack.getCurrentPosition()).length());
+                        if (answers.get(mSwipeStack.getCurrentPosition()).length() < 25) {
+                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
+                        } else if ( answers.get(mSwipeStack.getCurrentPosition()).length() < 50 && answers.get(mSwipeStack.getCurrentPosition()).length() > 25) {
+                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
+                        }
+                        textView.setText(answers.get(mSwipeStack.getCurrentPosition()));
+
                         isTurned = true;
                     }
                     mSwipeStack.startAnimation(turn_2);
@@ -205,6 +213,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         return true;
     }
 
+
+    //menu buttons actions
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -231,6 +241,20 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         return super.onOptionsItemSelected(item);
     }
 
+    public void setCardFontSize(int length) {
+        if (length <= 25) {
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
+        } else if ( length > 25  && length <= 50) {
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 35f);
+        } else if ( length > 50  && length <= 100) {
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
+        } else if ( length > 100 ) {
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25f);
+
+        }
+    }
+
+    //show results dialog
     public void showResultsDialog() {
 
         // dialog builder
@@ -270,12 +294,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         }
         answersRight++;
         isTurned = false;
-        String swipedElement = mAdapter.getItem(position);
         currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
-        Toast.makeText(this, getString(R.string.view_swiped_right, swipedElement),
-                Toast.LENGTH_SHORT).show();
-        if(mData.size() - 1 == position) {
-            Toast.makeText(this, R.string.stack_empty, Toast.LENGTH_SHORT).show();
+        answerResultToast.setText(R.string.view_swiped_right);
+        answerResultToast.show();
+        if(questions.size() - 1 == position) {
             showResultsDialog();
         }
     }
@@ -286,12 +308,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             cardPosition++;
         }
         isTurned = false;
-        String swipedElement = mAdapter.getItem(position);
         currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
-        Toast.makeText(this, getString(R.string.view_swiped_left, swipedElement),
-                Toast.LENGTH_SHORT).show();
-        if(mData.size() - 1 == position) {
-            Toast.makeText(this, R.string.stack_empty, Toast.LENGTH_SHORT).show();
+        answerResultToast.setText(R.string.view_swiped_left);
+        answerResultToast.show();
+        if(questions.size() - 1 == position) {
             showResultsDialog();
         }
     }
@@ -332,6 +352,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             System.out.println("DATA SET");
 
             textView = (TextView) convertView.findViewById(R.id.textViewCard);
+            setCardFontSize(mData.get(position).length());
             textView.setText(mData.get(position));
             return convertView;
         }
@@ -392,15 +413,11 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         alertDialog.show();
     }
 
+    //shuffles list
     private void shuffleList(){
         Collections.shuffle(cardsInList, new Random(seed));
     }
 
-    private void logList(){
-        for (int i=0;i<cardsInList.size();i++){
-            Log.d("cardsinlist", cardsInList.get(i).getQuestion());
-        }
-    }
 
     private void createUrlParamsStr(){
         StringBuilder urlParams = new StringBuilder();
