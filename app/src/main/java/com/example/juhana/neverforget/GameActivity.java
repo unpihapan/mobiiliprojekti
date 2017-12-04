@@ -101,7 +101,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     public void onResume(){
         super.onResume();
         if(shouldExecuteOnResume){
-            getUpdatedCardsFromList();
+            getUpdatedCardsFromList(false);
         } else {
             shouldExecuteOnResume = true;
         }
@@ -131,12 +131,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     }
 
     //updating cards, when coming back from edit mode
-    private void getUpdatedCardsFromList() {
+    private void getUpdatedCardsFromList(boolean shuffle) {
         questions.clear();
         answers.clear();
         title = db.cardListDao().getCardListById(list_id).getName();
         setTitle(title);
         cardsInList = db.cardDao().getCardsByListId(list_id);
+        if (shuffle) Collections.shuffle(cardsInList, new Random(System.nanoTime()));
         if ( cardsInList.size() == 0 ) {
             currentCard.setText(R.string.no_cards_in_list);
         } else {
@@ -271,7 +272,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 cardPosition = 1;
                 currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
                 mSwipeStack.resetStack();
-                resetAndShuffleQuestions();
+
+                //Shuffletaan kyssärit ja vastaukset
+                getUpdatedCardsFromList(true);
                 answersRight = 0;
                 d.cancel();
             }
@@ -285,13 +288,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 finish();
             }
         });
-    }
-
-    public void resetAndShuffleQuestions()
-    {
-        questions.clear();
-        answers.clear();
-        getCardsFromList();
     }
 
     @Override
@@ -450,6 +446,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             // UI thread
             String response = jsonResponse.trim().equals("\"OK\"") ? "List uploaded successfully" : "List upload failed";
             Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-        }
+        } 
     }
 }
