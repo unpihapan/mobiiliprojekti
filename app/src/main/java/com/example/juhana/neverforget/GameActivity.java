@@ -95,6 +95,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
         getCardsFromList();
+        mAdapter.shuffleList();
 
     }
 
@@ -114,7 +115,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         list_id = db.cardListDao().getIdByCardListName(title);
         setTitle(db.cardListDao().getCardListById(list_id).getName());
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        shuffleList();
+        mAdapter.shuffleList();
         if (cardsInList.size() == 0) {
             currentCard.setText(R.string.no_cards_in_list);
 
@@ -138,7 +139,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         title = db.cardListDao().getCardListById(list_id).getName();
         setTitle(title);
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        shuffleList();
+        mAdapter.shuffleList();
         if ( cardsInList.size() == 0 ) {
             currentCard.setText(R.string.no_cards_in_list);
         } else {
@@ -273,6 +274,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 cardPosition = 1;
                 currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
                 mSwipeStack.resetStack();
+                mAdapter.shuffleList();
+                answersRight = 0;
                 d.cancel();
             }
         });
@@ -343,6 +346,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             return position;
         }
 
+        public void shuffleList(){
+            Collections.shuffle(mData, new Random(System.nanoTime()));
+        }
+
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
@@ -411,11 +418,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         }
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
-    }
-
-    //shuffles list
-    private void shuffleList(){
-        Collections.shuffle(cardsInList, new Random(seed));
     }
 
 
