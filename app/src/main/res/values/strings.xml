@@ -39,6 +39,9 @@
     <string name="add_activity_title">%1$s: Add Cards</string>
     <string name="add_activity_title_edit">%1$s: Edit Cards</string>
 
+    <string name="download_activity_title">Download Card List</string>
+    <string name="dialog_download_title">Download %1$s Card List?</string>
+    <string name="dialog_download_message">%1$s card list will be added to your phone\'s memory</string>
 
     <string name="swipe_left">Swipe left</string>
     <string name="swipe_right">Swipe right</string>
