@@ -4,15 +4,11 @@ import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,11 +16,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-
-/**
- * Created by Elmeri on 28.11.2017.
- */
 
 public class getFromDB extends AppCompatActivity {
 
@@ -41,14 +32,15 @@ public class getFromDB extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_getfromdb);
-        String title = "Download cardlist";
+        String title = getString(R.string.download_activity_title);
         setTitle(title);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         dbListView = (ListView) findViewById(R.id.lv_db);
         db = AppDatabase.getDatabase(getApplicationContext());
-
 
         // populate listView
         simpleAdapter = new SimpleAdapter(this, lists, R.layout.getfromdb_activitylist_item,
@@ -67,8 +59,6 @@ public class getFromDB extends AppCompatActivity {
         });
 
         new getListsFrom_db().execute();
-
-
     }
 
     private class getListsFrom_db extends AsyncTask<Void, Void, String> {
@@ -81,9 +71,9 @@ public class getFromDB extends AppCompatActivity {
         protected void onPostExecute(String jsonResponse) {
             // UI thread
             // Parse data from JSON
-            JSONArray json_array = null;
-            JSONObject json_object = null;
-            String name = null;
+            JSONArray json_array ;
+            JSONObject json_object;
+            String name;
             int cardCount;
             int list_id;
             try {
@@ -131,7 +121,6 @@ public class getFromDB extends AppCompatActivity {
         }
     }
 
-
     private class getCardsFrom_List extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {
@@ -142,10 +131,10 @@ public class getFromDB extends AppCompatActivity {
         protected void onPostExecute(String jsonResponse) {
             // UI thread
             // Parse card data from lists
-            JSONArray json_array = null;
-            JSONObject json_object = null;
-            String question = null;
-            String answer = null;
+            JSONArray json_array ;
+            JSONObject json_object;
+            String question;
+            String answer;
             String newListName = listName;
             ArrayList<HashMap<String, String>> cardsArrayList = new ArrayList<>();
             try {
@@ -198,7 +187,6 @@ public class getFromDB extends AppCompatActivity {
                 db.cardListDao().InsertCardLists(cardList);
             }
             finish();
-            return;
         }
     }
 
@@ -207,16 +195,12 @@ public class getFromDB extends AppCompatActivity {
         return db.cardListDao().getIdByCardListName(name) == 0;
     }
 
-
     // Create list dialog
     public void showWarningDialog() {
-
-
-
         // dialog builder
         final AlertDialog d = new AlertDialog.Builder(this)
-                .setTitle("Download " + listName + " cardlist?")
-                .setMessage(listName + " cardlist will be added to your phone's memory")
+                .setTitle(getString(R.string.dialog_download_title, listName))
+                .setMessage(getString(R.string.dialog_download_message, listName))
                 .setIcon(R.drawable.ic_download_black)
                 .setPositiveButton(R.string.action_done, null)
                 .setNegativeButton(R.string.action_cancel, null)
@@ -240,6 +224,7 @@ public class getFromDB extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

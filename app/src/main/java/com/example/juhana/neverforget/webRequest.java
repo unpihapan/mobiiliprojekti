@@ -8,21 +8,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
-/**
- * Created by Elmeri on 28.11.2017.
- */
-
-public class webRequest {
+class webRequest {
 
     // GET JSON http request
-    public static String doWebRequest(String requestURL){
+    static String doWebRequest(String requestURL){
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-        String jsonStr = null;
+        String jsonStr;
 
         try {
             // URL connect
@@ -33,25 +26,25 @@ public class webRequest {
             InputStream inputStream = urlConnection.getInputStream();
             // return if input stream is null
             if (inputStream == null){
-                return jsonStr;
+                return null;
             }
 
             // read JSON data into buffer
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = reader.readLine()) != null){
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
             }
             if (buffer.length() == 0){
                 // Stream was empty,  no point in parsing
-                return jsonStr;
+                return null;
             }
             // read buffer to string
             jsonStr = buffer.toString();
 
         } catch (IOException e){
-            return jsonStr;
+            return null;
 
         } finally{
             if (urlConnection != null){
@@ -60,10 +53,11 @@ public class webRequest {
             if (reader != null){
                 try {
                     reader.close();
-                } catch (final IOException e){}
+                } catch (final IOException e){
+                    Log.d("IOExc", "Failed to close reader");
+                }
             }
         }
         return jsonStr;
     }
-
 }
