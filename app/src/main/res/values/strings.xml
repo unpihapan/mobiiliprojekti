@@ -41,6 +41,11 @@
 
     <string name="view_swiped_left">Wrong!</string>
     <string name="view_swiped_right">Correct!</string>
+
+    <string name="download_activity_title">Download Card List</string>
+    <string name="dialog_download_title">Download %1$s Card List?</string>
+    <string name="dialog_download_message">%1$s card list will be added to your phone\'s memory</string>
+
     <string name="dummy_text">Test</string>
 
     <string name="dialog_end_title">No more cards!</string>
