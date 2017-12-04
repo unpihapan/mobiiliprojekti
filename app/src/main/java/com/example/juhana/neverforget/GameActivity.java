@@ -177,7 +177,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                         setCardFontSize(questions.get(mSwipeStack.getCurrentPosition()).length());
                         if (questions.get(mSwipeStack.getCurrentPosition()).length() < 25) {
                             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
-                        } else if ( questions.get(mSwipeStack.getCurrentPosition()).length() < 50 && questions.get(mSwipeStack.getCurrentPosition()).length() > 25) {
+                        } else if ( questions.get(mSwipeStack.getCurrentPosition()).length() < 50) {
                             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
                         }
                         textView.setText(questions.get(mSwipeStack.getCurrentPosition()));
@@ -186,7 +186,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                         setCardFontSize(answers.get(mSwipeStack.getCurrentPosition()).length());
                         if (answers.get(mSwipeStack.getCurrentPosition()).length() < 25) {
                             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
-                        } else if ( answers.get(mSwipeStack.getCurrentPosition()).length() < 50 && answers.get(mSwipeStack.getCurrentPosition()).length() > 25) {
+                        } else if ( answers.get(mSwipeStack.getCurrentPosition()).length() < 50) {
                             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
                         }
                         textView.setText(answers.get(mSwipeStack.getCurrentPosition()));
