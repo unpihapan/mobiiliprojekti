@@ -95,8 +95,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
         getCardsFromList();
-        mAdapter.shuffleList();
-
     }
 
     @Override
@@ -115,7 +113,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         list_id = db.cardListDao().getIdByCardListName(title);
         setTitle(db.cardListDao().getCardListById(list_id).getName());
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        mAdapter.shuffleList();
+        Collections.shuffle(cardsInList,new Random(System.nanoTime()));
         if (cardsInList.size() == 0) {
             currentCard.setText(R.string.no_cards_in_list);
 
@@ -139,7 +137,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         title = db.cardListDao().getCardListById(list_id).getName();
         setTitle(title);
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        mAdapter.shuffleList();
         if ( cardsInList.size() == 0 ) {
             currentCard.setText(R.string.no_cards_in_list);
         } else {
@@ -274,7 +271,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 cardPosition = 1;
                 currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
                 mSwipeStack.resetStack();
-                mAdapter.shuffleList();
+                resetAndShuffleQuestions();
                 answersRight = 0;
                 d.cancel();
             }
@@ -288,6 +285,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 finish();
             }
         });
+    }
+
+    public void resetAndShuffleQuestions()
+    {
+        questions.clear();
+        answers.clear();
+        getCardsFromList();
     }
 
     @Override
@@ -346,9 +350,6 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             return position;
         }
 
-        public void shuffleList(){
-            Collections.shuffle(mData, new Random(System.nanoTime()));
-        }
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
