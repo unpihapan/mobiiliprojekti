@@ -175,20 +175,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 public void onAnimationEnd(Animation animation) {
                     if (isTurned) {
                         setCardFontSize(questions.get(mSwipeStack.getCurrentPosition()).length());
-                        if (questions.get(mSwipeStack.getCurrentPosition()).length() < 25) {
-                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
-                        } else if ( questions.get(mSwipeStack.getCurrentPosition()).length() < 50) {
-                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
-                        }
                         textView.setText(questions.get(mSwipeStack.getCurrentPosition()));
                         isTurned = false;
                     } else if (!isTurned) {
                         setCardFontSize(answers.get(mSwipeStack.getCurrentPosition()).length());
-                        if (answers.get(mSwipeStack.getCurrentPosition()).length() < 25) {
-                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
-                        } else if ( answers.get(mSwipeStack.getCurrentPosition()).length() < 50) {
-                            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
-                        }
                         textView.setText(answers.get(mSwipeStack.getCurrentPosition()));
 
                         isTurned = true;
