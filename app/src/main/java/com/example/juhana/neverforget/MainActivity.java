@@ -158,17 +158,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onResume(){
         super.onResume();
         refresh();
-        // Nautetaan/piilotetaan apunuoli
-        tv1 = (TextView)findViewById(R.id.tv1);
-        arrow = (ImageView)findViewById(R.id.arrow);
-        if (!cardListArray.isEmpty()){
-            tv1.setVisibility(View.GONE);
-            arrow.setVisibility(View.GONE);
-        }
-        else {
-            tv1.setVisibility(View.VISIBLE);
-            arrow.setVisibility(View.VISIBLE);
-        }
     }
     // floating action button click listeners
     @Override
@@ -295,6 +284,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tempHashMap.put("CardListName", cardLists.get(i).getName());
             tempHashMap.put("CardCount", "Cards in List: " + db.cardDao().getCardsByListId(cardLists.get(i).getId()).size());
             cardListArray.add(tempHashMap);
+        }
+        // Nautetaan/piilotetaan apunuoli
+        tv1 = (TextView)findViewById(R.id.tv1);
+        arrow = (ImageView)findViewById(R.id.arrow);
+        if (!cardListArray.isEmpty()){
+            tv1.setVisibility(View.GONE);
+            arrow.setVisibility(View.GONE);
+        }
+        else {
+            tv1.setVisibility(View.VISIBLE);
+            arrow.setVisibility(View.VISIBLE);
         }
     }
 
