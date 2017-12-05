@@ -7,8 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,6 +49,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
     private int answersRight;
     private int totalCards;
     private int cardPosition;
+    private int oldCardListLenght;
     List<Card> cardsInList;
     Toast answerResultToast;
 
@@ -74,6 +75,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         turn_2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.turn_2);
 
 
+
+
+
         // db
         db = AppDatabase.getDatabase(getApplicationContext());
 
@@ -83,6 +87,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         setTitle(title);
 
         mFab.setOnClickListener(this);
+
 
 
         questions = new ArrayList<>();
@@ -113,7 +118,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         list_id = db.cardListDao().getIdByCardListName(title);
         setTitle(db.cardListDao().getCardListById(list_id).getName());
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        Collections.shuffle(cardsInList,new Random(System.nanoTime()));
+        oldCardListLenght = cardsInList.size();
+        Collections.shuffle(cardsInList,new Random(seed));
         if (cardsInList.size() == 0) {
             currentCard.setText(R.string.no_cards_in_list);
             mFab.setVisibility(View.INVISIBLE);
@@ -135,12 +141,20 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
     //updating cards, when coming back from edit mode
     private void getUpdatedCardsFromList(boolean shuffle) {
+
+        Log.d("test boolean", String.valueOf(shuffle));
         questions.clear();
         answers.clear();
         title = db.cardListDao().getCardListById(list_id).getName();
         setTitle(title);
         cardsInList = db.cardDao().getCardsByListId(list_id);
-        if (shuffle) Collections.shuffle(cardsInList, new Random(System.nanoTime()));
+        if(shuffle) {
+            seed = System.nanoTime();
+            Collections.shuffle(cardsInList, new Random(seed));
+            shuffle = false;
+        } else {
+            Collections.shuffle(cardsInList, new Random(seed));
+        }
         if ( cardsInList.size() == 0 ) {
             currentCard.setText(R.string.no_cards_in_list);
             mFab.setVisibility(View.INVISIBLE);
@@ -152,9 +166,11 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 answers.add(cardsInList.get(i).getAnswer());
 
             }
+            mAdapter.notifyDataSetChanged();
+
             totalCards = questions.size();
             currentCard.setText(getString(R.string.current_card, cardPosition, totalCards));
-
+        }
             if (!isTurned) {
                 setCardFontSize(questions.get(mSwipeStack.getCurrentPosition()).length());
                 textView.setText(questions.get(mSwipeStack.getCurrentPosition()));
@@ -162,7 +178,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 setCardFontSize(answers.get(mSwipeStack.getCurrentPosition()).length());
                 textView.setText(answers.get(mSwipeStack.getCurrentPosition()));
             }
-        }
+
 
     }
 
@@ -236,6 +252,7 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         return super.onOptionsItemSelected(item);
     }
 
+    // set text size in card
     public void setCardFontSize(int length) {
         if (length <= 25) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
@@ -352,7 +369,16 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             System.out.println("DATA SET");
 
             textView = (TextView) convertView.findViewById(R.id.textViewCard);
-            setCardFontSize(mData.get(position).length());
+            int length = mData.get(position).length();
+            if (length <= 25) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
+            } else if ( length > 25  && length <= 50) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 35f);
+            } else if ( length > 50  && length <= 100) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f);
+            } else if ( length > 100 ) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25f);
+            }
             textView.setText(mData.get(position));
             return convertView;
         }
