@@ -154,6 +154,8 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         } else {
             Collections.shuffle(cardsInList, new Random(seed));
         }
+
+        Log.d("APP", Integer.toString(cardsInList.size()));
         if ( cardsInList.size() == 0 ) {
             currentCard.setText(R.string.no_cards_in_list);
             mFab.setVisibility(View.INVISIBLE);
@@ -170,14 +172,18 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             totalCards = questions.size();
 
             setCardText(getString(R.string.current_card, cardPosition, totalCards));
-        }
-            if (!isTurned) {
-                setCardFontSize(questions.get(mSwipeStack.getCurrentPosition()));
-                textView.setText(questions.get(mSwipeStack.getCurrentPosition()));
-            } else if (isTurned) {
-                setCardFontSize(answers.get(mSwipeStack.getCurrentPosition()));
-                textView.setText(answers.get(mSwipeStack.getCurrentPosition()));
+            if (cardsInList.size() > 1) {
+                if (!isTurned) {
+                    setCardFontSize(questions.get(mSwipeStack.getCurrentPosition()));
+                    textView.setText(questions.get(mSwipeStack.getCurrentPosition()));
+                } else if (isTurned) {
+                    setCardFontSize(answers.get(mSwipeStack.getCurrentPosition()));
+                    textView.setText(answers.get(mSwipeStack.getCurrentPosition()));
+                }
             }
+        }
+        mAdapter.notifyDataSetChanged();
+
 
 
     }
@@ -264,9 +270,9 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
 
         if (length <= 25)
             newSize = 40f;
-         else if ( length > 25  )
+         else if ( length > 25 && length <= 50)
             newSize = 35f;
-         else if ( length > 50)
+         else if ( length > 50 && length <= 100)
             newSize = 30f;
          else
             newSize = 25f;

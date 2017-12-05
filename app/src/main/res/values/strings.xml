@@ -47,6 +47,8 @@
     <string name="dialog_download_message">%1$s card list will be added to your phone\'s memory</string>
 
     <string name="dummy_text">Test</string>
+    <string name="dummy_fab">Fab Test</string>
+
 
     <string name="dialog_end_title">No more cards!</string>
     <string name="dialog_end_message">Right answers %1$d/%2$d</string>
