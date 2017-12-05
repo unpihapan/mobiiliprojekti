@@ -118,9 +118,12 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mAdapter.shuffleList();
         if (cardsInList.size() == 0) {
             currentCard.setText(R.string.no_cards_in_list);
+            mFab.setVisibility(View.INVISIBLE);
 
 
         } else {
+            mFab.setVisibility(View.VISIBLE);
+
             for (int i = 0; i < cardsInList.size(); i++) {
                 questions.add(cardsInList.get(i).getQuestion());
                 answers.add(cardsInList.get(i).getAnswer());
@@ -142,7 +145,10 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
         mAdapter.shuffleList();
         if ( cardsInList.size() == 0 ) {
             currentCard.setText(R.string.no_cards_in_list);
+            mFab.setVisibility(View.INVISIBLE);
         } else {
+            mFab.setVisibility(View.VISIBLE);
+
             for (int i = 0; i < cardsInList.size(); i++) {
                 questions.add(cardsInList.get(i).getQuestion());
                 answers.add(cardsInList.get(i).getAnswer());
