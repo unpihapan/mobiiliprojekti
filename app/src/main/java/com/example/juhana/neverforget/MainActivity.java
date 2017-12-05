@@ -2,6 +2,7 @@ package com.example.juhana.neverforget;
 
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -73,10 +74,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab2.setOnClickListener(this);
 
         // Inflate the header view and add to listview
-        headerView = LayoutInflater.from(this)
-                .inflate(R.layout.main_activity_header, cardListView, false);
+        headerView = LayoutInflater.from(this).inflate(R.layout.main_activity_header, cardListView, false);
         cardListView.addHeaderView(headerView, null ,false);
 
+        View footerView = LayoutInflater.from(this).inflate(R.layout.main_activity_footer, cardListView, false);
+        cardListView.addFooterView(footerView, null, false);
 
         // prepare the fade in/out animator
         final TextView tvHeaderTitle = (TextView)findViewById(R.id.headerTitle);
@@ -386,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void popupMenuList(final int list_id, final int position){
 
         //Creating the instance of PopupMenu
-        PopupMenu popup = new PopupMenu(MainActivity.this, cardListView.getChildAt(position), Gravity.RIGHT);
+        PopupMenu popup = new PopupMenu(MainActivity.this, cardListView.getChildAt(position), Gravity.END);
         //Inflating the Popup using xml file
         popup.getMenuInflater()
                 .inflate(R.menu.popup_menu, popup.getMenu());
@@ -456,6 +458,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 d.cancel();
             }
         });
-        return;
     }
 }
