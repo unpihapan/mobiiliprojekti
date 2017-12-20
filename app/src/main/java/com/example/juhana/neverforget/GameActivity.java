@@ -1,8 +1,11 @@
 package com.example.juhana.neverforget;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -252,8 +255,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
                 startActivity(intent);
                 return true;
             case R.id.action_upload:
-                showUploadConfirmationDialog(totalCards > 0);
-                createUrlParamsStr();
+                if (isNetworkAvailable()){
+                    showUploadConfirmationDialog(totalCards > 0);
+                    createUrlParamsStr(); 
+                }
+                else{
+                    Toast.makeText(this, "You need an internet connection to access this feature.", Toast.LENGTH_LONG).show();
+                }
                 return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -490,5 +498,13 @@ public class GameActivity extends AppCompatActivity implements SwipeStack.SwipeS
             String response = jsonResponse.trim().equals("\"OK\"") ? "List uploaded successfully" : "List upload failed";
             Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
         } 
+    }
+
+    // check if user has internet connection or not
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

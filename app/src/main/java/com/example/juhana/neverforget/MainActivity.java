@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -171,10 +173,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 animateFAB();
                 break;
             case R.id.fab1:
-                // start gameactivity
-                Intent intent = new Intent(MainActivity.this, getFromDB.class );
-                startActivity(intent);
-                animateFAB();
+                // start game activity if network is available
+                if (isNetworkAvailable()){
+                    Intent intent = new Intent(MainActivity.this, getFromDB.class );
+                    startActivity(intent);
+                    animateFAB();
+                }
+                else{
+                    Toast.makeText(this, "You need an internet connection to access this feature.", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.fab2:
                 // show create list dialog
@@ -458,5 +465,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 d.cancel();
             }
         });
+    }
+
+    // check if user has internet connection or not
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
